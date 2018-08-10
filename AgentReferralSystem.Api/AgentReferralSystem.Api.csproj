@@ -5,19 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Calculate\" />
-    <Folder Include="Data\Models\Cache\" />
-    <Folder Include="Data\Models\SqlServer\" />
-    <Folder Include="Data\Query\Cache\" />
-    <Folder Include="Data\Query\SqlServer\" />
-    <Folder Include="Data\ViewModels\" />
     <Folder Include="Data\Services\Interfaces\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />
+    <PackageReference Include="System.Data.Odbc" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
