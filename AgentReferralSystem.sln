@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentReferralSystem.Api", "AgentReferralSystem.Api\AgentReferralSystem.Api.csproj", "{B33AFC38-2746-4839-87DC-7AC5E4AD9054}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B33AFC38-2746-4839-87DC-7AC5E4AD9054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B33AFC38-2746-4839-87DC-7AC5E4AD9054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B33AFC38-2746-4839-87DC-7AC5E4AD9054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B33AFC38-2746-4839-87DC-7AC5E4AD9054}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77CA994F-A4A8-4E8E-9C77-5F5999E7D309}
+	EndGlobalSection
+EndGlobal

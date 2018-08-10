@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Calculate\" />
+    <Folder Include="Data\Models\Cache\" />
+    <Folder Include="Data\Models\SqlServer\" />
+    <Folder Include="Data\Query\Cache\" />
+    <Folder Include="Data\Query\SqlServer\" />
+    <Folder Include="Data\ViewModels\" />
+    <Folder Include="Data\Services\Interfaces\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />
+  </ItemGroup>
+
+</Project>
