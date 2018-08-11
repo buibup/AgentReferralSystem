@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AgentReferralSystem.Api.Data.Config;
 using AgentReferralSystem.Api.Data.DataAccess;
 using AgentReferralSystem.Api.Data.DataAccess.Interfaces;
+using AgentReferralSystem.Api.Data.Services;
+using AgentReferralSystem.Api.Data.Services.Interfaces;
 using AgentReferralSystem.Api.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +37,8 @@ namespace AgentReferralSystem.Api
 
             services.AddTransient<ICacheDataAccess, CacheDataAccess>();
             services.AddTransient<ISqlServerDataAccess, SqlServerDataAccess>();
+
+            services.AddTransient<IAgentService, AgentService>();
 
             services.AddSwaggerDocumentation();
 

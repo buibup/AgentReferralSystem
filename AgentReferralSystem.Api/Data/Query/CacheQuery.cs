@@ -68,5 +68,14 @@ namespace AgentReferralSystem.Api.Data.Query
                 WHERE QUESPAPatMasDR = ?
                 ORDER BY ID DESC";
         }
+
+        public static string GetQBWCMEMBERSByPapmiRowIdList()
+        {
+            return @"
+                SELECT ID, QUESPAAdmDR, QUESPAPatMasDR,
+	                QDateFrom, QDateTO
+                FROM questionnaire.QBWCMEMBERS	
+                WHERE QUESPAPatMasDR IN @rowIdList";
+        }
     }
 }

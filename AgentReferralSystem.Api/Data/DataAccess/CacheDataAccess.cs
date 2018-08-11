@@ -90,5 +90,23 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                 throw;
             }
         }
+
+        public async Task<IEnumerable<QBWCMEMBERS>> GetQBWCMEMBERSByPapmiRowIdListAsync(List<int> papmiRowIdList)
+        {
+            try
+            {
+                using (var conn = new OdbcConnection(_connectionStrings.Cache))
+                {
+                    var data = await conn.QueryAsync<QBWCMEMBERS>(CacheQuery.GetQBWCMEMBERSByPapmiRowIdList(), new { papmiRowIdList });
+
+                    return data;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
