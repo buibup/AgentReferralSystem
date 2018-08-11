@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AgentReferralSystem.Api.Data.Services.Interfaces
 {
-    interface IAgentService
+    public interface IAgentService
     {
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
     }
