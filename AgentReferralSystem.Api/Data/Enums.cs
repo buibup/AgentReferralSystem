@@ -5,6 +5,15 @@ using System.Threading.Tasks;
 
 namespace AgentReferralSystem.Api.Data
 {
+    public enum SaleTypeEnum
+    {
+        Membership = 1,
+        ServiceMember,
+        ServiceNonMember,
+        CompoundingMember,
+        CompoundingNonMember
+    }
+
     public enum Month
     {
         January = 1,

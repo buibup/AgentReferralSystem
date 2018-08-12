@@ -21,6 +21,8 @@ namespace AgentReferralSystem.Api.Data.ViewModels
     {
         public List<SaleDetailViewModel> SaleDetails { get; set; }
         public Month Month { get; set; }
+        public int MembershipCount { get; set; }
+        public int BWCServicesCount { get; set; }
         public decimal TotalSales { get; set; }
     }
 

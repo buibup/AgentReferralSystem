@@ -10,62 +10,82 @@ namespace AgentReferralSystem.Api.Data.Services
 {
     public static class AgentServiceProcessor
     {
-        public static AgentViewModel AgentViewModelProcess(this Agent agent, IEnumerable<ARPatientBill> patientBills, IEnumerable<QBWCMEMBERS> bWCMEMBERs)
+        public static AgentViewModel AgentViewModelProcess(this Agent agent, 
+            IEnumerable<ARPatientBill> patientBills, 
+            IEnumerable<QBWCMEMBERS> bWCMEMBERs)
         {
+            var start = agent.StartDate;
             var years = patientBills.Select(d => d.EpisodeDate.Year).Distinct();
             var totalSalesPerMonths = new List<TotalSalesPerMonthViewModel>();
 
+            ResetToBase:
+            var agentBase = agent;
+            var agentsSaleTypes = agentBase.AgentSaleTypes;
 
-            foreach(var year in years)
-            {
-                foreach (var month in (Month[])Enum.GetValues(typeof(Month)))
-                {
-                    decimal totalSales = 0;
-                    var saleDetails = new List<SaleDetailViewModel>();
+            #region set object
+            var membershipObject = agentBase.AgentSaleTypes
+                .Where(d => d.SaleTypeId == (int)SaleTypeEnum.Membership)
+                .Select(d => new { d.BaseCommission, d.Target, d.TargetPeriod, d.ResetToBase, d.IncreaseIfTargetMet, d.Maximum }).FirstOrDefault();
 
-                    switch (month)
-                    {
-                        case Month.January:
-                            var data = patientBills.Where(d => d.EpisodeDate.Year == year).ToList();
-                            break;
-                        case Month.February:
-                            break;
-                        case Month.March:
-                            break;
-                        case Month.April:
-                            break;
-                        case Month.May:
-                            break;
-                        case Month.June:
-                            break;
-                        case Month.July:
-                            break;
-                        case Month.August:
-                            break;
-                        case Month.September:
-                            break;
-                        case Month.October:
-                            break;
-                        case Month.November:
-                            break;
-                        case Month.December:
-                            break;
-                        default:
-                            break;
-                    }
+            var serviceMemberObject = agentBase.AgentSaleTypes
+                .Where(d => d.SaleTypeId == (int)SaleTypeEnum.ServiceMember)
+                .Select(d => new { d.BaseCommission, d.Target, d.TargetPeriod, d.ResetToBase, d.IncreaseIfTargetMet, d.Maximum }).FirstOrDefault();
 
+            var serviceNonMemberObject = agentBase.AgentSaleTypes
+                .Where(d => d.SaleTypeId == (int)SaleTypeEnum.ServiceNonMember)
+                .Select(d => new { d.BaseCommission, d.Target, d.TargetPeriod, d.ResetToBase, d.IncreaseIfTargetMet, d.Maximum }).FirstOrDefault();
 
-                    var totalSalesPerMonth = new TotalSalesPerMonthViewModel
-                    {
-                        Month = month,
-                        SaleDetails = saleDetails,
-                        TotalSales = totalSales
-                    };
+            var compoundingMemberObject = agentBase.AgentSaleTypes
+                .Where(d => d.SaleTypeId == (int)SaleTypeEnum.CompoundingMember)
+                .Select(d => new { d.BaseCommission, d.Target, d.TargetPeriod, d.ResetToBase, d.IncreaseIfTargetMet, d.Maximum }).FirstOrDefault();
 
-                    totalSalesPerMonths.Add(totalSalesPerMonth);
-                }
-            }
+            var compoundingNonMemberObject = agentBase.AgentSaleTypes
+                .Where(d => d.SaleTypeId == (int)SaleTypeEnum.CompoundingNonMember)
+                .Select(d => new { d.BaseCommission, d.Target, d.TargetPeriod, d.ResetToBase, d.IncreaseIfTargetMet, d.Maximum }).FirstOrDefault();
+            #endregion
             
+            
+            var monthCountResetToBase = 0;
+            var monthCountCommTarget = 0;
+            
+            while (start < agent.EndDate)
+            {
+                var currentYear = start.Year;
+                var currentMonth = start.Month;
+
+                var patientBilllistOnCurrent = patientBills.Where(d => (d.EpisodeDate.Year == currentYear) && (d.EpisodeDate.Month == currentMonth)).ToList();
+                
+
+                var membersThisMonth = bWCMEMBERs.Where(d => d.QDateFrom.Month == currentMonth).ToList();
+                var bWCServicesThisMonth = patientBilllistOnCurrent.Select(d => d.PAADM_PAPMI_DR).Distinct().ToList();
+
+                var tupleTotalSalesPerMonthVM = patientBilllistOnCurrent.ToTotalSalesPerMonthVM(membersThisMonth);
+
+                var totalSalesPerMonth = new TotalSalesPerMonthViewModel
+                {
+                    Month = (Month)currentMonth,
+                    SaleDetails = tupleTotalSalesPerMonthVM.Item1,
+                    MembershipCount = membersThisMonth.Count,
+                    BWCServicesCount = bWCServicesThisMonth.Count,
+                    TotalSales = tupleTotalSalesPerMonthVM.Item2,
+                };
+
+                totalSalesPerMonths.Add(totalSalesPerMonth);
+
+                // if target met
+
+                // add month
+                start = agent.StartDate.AddMonths(1);
+
+                monthCountResetToBase += 1;
+                monthCountCommTarget += 1;
+
+                if (monthCountResetToBase > membershipObject.ResetToBase)
+                {
+                    goto ResetToBase;
+                }
+
+            }
 
             var totalSalesPerYear = new TotalSalesPerYearViewModel
             {
@@ -81,11 +101,16 @@ namespace AgentReferralSystem.Api.Data.Services
             return result;
         }
 
-        private static List<SaleDetailViewModel> PatientBillListToSaleDetailList(this List<ARPatientBill> patientBills)
+        private static Tuple<List<SaleDetailViewModel>, decimal> ToTotalSalesPerMonthVM(this List<ARPatientBill> patientBills,
+            IEnumerable<QBWCMEMBERS> bWCMEMBERs)
         {
-            var result = new List<SaleDetailViewModel>();
+            var saleDetailVMList = new List<SaleDetailViewModel>();
+            decimal totalSales = 0;
+
+
             foreach (var item in patientBills)
             {
+                
                 var model = new SaleDetailViewModel
                 {
                     HN = item.PAPMI_No,
@@ -101,7 +126,7 @@ namespace AgentReferralSystem.Api.Data.Services
                 };
             }
 
-            return result;
+            return Tuple.Create(saleDetailVMList, totalSales);
         }
     }
 }
