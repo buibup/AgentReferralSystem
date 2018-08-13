@@ -35,7 +35,7 @@ namespace AgentReferralSystem.Api.Data.Services
             // get all patient register membership
             var memberRegisList = await _cacheDataAccess.GetQBWCMEMBERSByPapmiRowIdListAsync(papmiRowIdList);
 
-            
+            var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
 
             return result;
         }

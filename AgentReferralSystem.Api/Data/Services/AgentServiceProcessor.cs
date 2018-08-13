@@ -10,13 +10,15 @@ namespace AgentReferralSystem.Api.Data.Services
 {
     public static class AgentServiceProcessor
     {
-        public static AgentViewModel AgentViewModelProcess(this Agent agent, 
-            IEnumerable<ARPatientBill> patientBills, 
-            IEnumerable<QBWCMEMBERS> bWCMEMBERs)
+        public static AgentViewModel AgentViewModelProcess(this Agent agent,
+            IEnumerable<ARPatientBill> patientBills,
+            IEnumerable<QBWCMEMBERS> memberRegisList,
+            IEnumerable<ARCItmMast> itemCompoundingList)
         {
             var start = agent.StartDate;
             var years = patientBills.Select(d => d.EpisodeDate.Year).Distinct();
             var totalSalesPerMonths = new List<TotalSalesPerMonthViewModel>();
+
 
             ResetToBase:
             var agentBase = agent;
@@ -43,31 +45,173 @@ namespace AgentReferralSystem.Api.Data.Services
                 .Where(d => d.SaleTypeId == (int)SaleTypeEnum.CompoundingNonMember)
                 .Select(d => new { d.BaseCommission, d.Target, d.TargetPeriod, d.ResetToBase, d.IncreaseIfTargetMet, d.Maximum }).FirstOrDefault();
             #endregion
-            
-            
+
+            var agentCalc = new
+            {
+                Membership = membershipObject,
+                ServiceMember = serviceMemberObject,
+                ServiceNonMember = serviceNonMemberObject,
+                CompoundingMember = compoundingMemberObject,
+                CompoundingNonMember = compoundingNonMemberObject
+            };
+
+
             var monthCountResetToBase = 0;
             var monthCountCommTarget = 0;
-            
+
             while (start < agent.EndDate)
             {
+                var saleDetailList = new List<SaleDetailViewModel>();
                 var currentYear = start.Year;
                 var currentMonth = start.Month;
+                decimal totalSale = 0;
 
-                var patientBilllistOnCurrent = patientBills.Where(d => (d.EpisodeDate.Year == currentYear) && (d.EpisodeDate.Month == currentMonth)).ToList();
-                
+                // filter patient on current month
+                var patientBillListOnCurrent = patientBills.Where(pt => (pt.EpisodeDate.Year == currentYear) && (pt.EpisodeDate.Month == currentMonth)).ToList();
 
-                var membersThisMonth = bWCMEMBERs.Where(d => d.QDateFrom.Month == currentMonth).ToList();
-                var bWCServicesThisMonth = patientBilllistOnCurrent.Select(d => d.PAADM_PAPMI_DR).Distinct().ToList();
+                // count membership on current month
+                var membersThisMonth = memberRegisList.Where(m => (m.QDateFrom.Year == currentYear) && (m.QDateFrom.Month == currentMonth)).ToList();
 
-                var tupleTotalSalesPerMonthVM = patientBilllistOnCurrent.ToTotalSalesPerMonthVM(membersThisMonth);
+                // count all patient bwc services on current month
+                var papmiDRList = patientBillListOnCurrent.Select(p => p.PAADM_PAPMI_DR).Distinct().ToList();
+
+                var memberPapmiDrList = memberRegisList.Select(m => m.QUESPAPatMasDR).Distinct().ToList();
+                // patient member
+                var patientBillMemberList = patientBillListOnCurrent.Where(p => memberPapmiDrList.Any(p2 => p2 == p.PAADM_PAPMI_DR)).ToList();
+
+                // patient non member
+                var patientBillNonmemberList = patientBillListOnCurrent.Where(p => !memberPapmiDrList.Any(p2 => p2 == p.PAADM_PAPMI_DR)).ToList();
+
+                // add item member
+                foreach (var item in patientBillMemberList)
+                {
+                    decimal commisson = 0;
+                    if (itemCompoundingList.Any(i => i.ARCIM_RowId == item.ARCIM_RowId)) // compounding member
+                    {
+                        try
+                        {
+                            commisson = (item.ITM_LineTotal * agentCalc.CompoundingMember.BaseCommission) / 100;
+                        }
+                        catch (Exception)
+                        {
+                            commisson = 0;
+                        }
+                        var model = new SaleDetailViewModel
+                        {
+                            HN = item.PAPMI_No,
+                            Episode = item.EpisodeNo,
+                            Date = item.EpisodeDate,
+                            Membership = 0,
+                            ServiceMember = 0,
+                            ServiceNonMember = 0,
+                            CompoundingMember = item.ITM_LineTotal,
+                            CompoundingNonMember = 0,
+                            TotalAmount = 0,
+                            Commission = commisson
+                        };
+
+                        saleDetailList.Add(model);
+                    }
+                    else // service member
+                    {
+                        try
+                        {
+                            commisson = (item.ITM_LineTotal * agentCalc.ServiceMember.BaseCommission) / 100;
+                        }
+                        catch (Exception)
+                        {
+                            commisson = 0;
+                        }
+                        var model = new SaleDetailViewModel
+                        {
+                            HN = item.PAPMI_No,
+                            Episode = item.EpisodeNo,
+                            Date = item.EpisodeDate,
+                            Membership = 0,
+                            ServiceMember = item.ITM_LineTotal,
+                            ServiceNonMember = 0,
+                            CompoundingMember = 0,
+                            CompoundingNonMember = 0,
+                            TotalAmount = 0,
+                            Commission = commisson
+                        };
+
+                        saleDetailList.Add(model);
+                    }
+
+                    totalSale += commisson;
+                }
+
+                // add item non member
+                foreach (var item in patientBillNonmemberList)
+                {
+                    decimal commisson = 0;
+                    if (itemCompoundingList.Any(i => i.ARCIM_RowId == item.ARCIM_RowId)) // compounding nonmember
+                    {
+                        try
+                        {
+                            commisson = (item.ITM_LineTotal * agentCalc.CompoundingNonMember.BaseCommission) / 100;
+                        }
+                        catch (Exception)
+                        {
+                            commisson = 0;
+                        }
+
+                        var model = new SaleDetailViewModel
+                        {
+                            HN = item.PAPMI_No,
+                            Episode = item.EpisodeNo,
+                            Date = item.EpisodeDate,
+                            Membership = 0,
+                            ServiceMember = 0,
+                            ServiceNonMember = 0,
+                            CompoundingMember = 0,
+                            CompoundingNonMember = item.ITM_LineTotal,
+                            TotalAmount = 0,
+                            Commission = commisson
+                        };
+
+                        saleDetailList.Add(model);
+                    }
+                    else // not compounding nonmember
+                    {
+                        try
+                        {
+                            commisson = (item.ITM_LineTotal * agentCalc.ServiceNonMember.BaseCommission) / 100;
+                        }
+                        catch (Exception)
+                        {
+                            commisson = 0;
+                        }
+
+                        var model = new SaleDetailViewModel
+                        {
+                            HN = item.PAPMI_No,
+                            Episode = item.EpisodeNo,
+                            Date = item.EpisodeDate,
+                            Membership = 0,
+                            ServiceMember = 0,
+                            ServiceNonMember = item.ITM_LineTotal,
+                            CompoundingMember = 0,
+                            CompoundingNonMember = 0,
+                            TotalAmount = 0,
+                            Commission = commisson
+                        };
+
+                        saleDetailList.Add(model);
+                    }
+
+                    totalSale += commisson;
+                }
+
 
                 var totalSalesPerMonth = new TotalSalesPerMonthViewModel
                 {
                     Month = (Month)currentMonth,
-                    SaleDetails = tupleTotalSalesPerMonthVM.Item1,
+                    SaleDetails = saleDetailList,
                     MembershipCount = membersThisMonth.Count,
-                    BWCServicesCount = bWCServicesThisMonth.Count,
-                    TotalSales = tupleTotalSalesPerMonthVM.Item2,
+                    BWCServicesCount = papmiDRList.Count,
+                    TotalSales = totalSale,
                 };
 
                 totalSalesPerMonths.Add(totalSalesPerMonth);
@@ -80,53 +224,39 @@ namespace AgentReferralSystem.Api.Data.Services
                 monthCountResetToBase += 1;
                 monthCountCommTarget += 1;
 
+                // month count more then month setup? reset to base
                 if (monthCountResetToBase > membershipObject.ResetToBase)
                 {
                     goto ResetToBase;
+                }
+
+
+                if (monthCountCommTarget > membershipObject.TargetPeriod)
+                {
                 }
 
             }
 
             var totalSalesPerYear = new TotalSalesPerYearViewModel
             {
-                
+
             };
 
             var result = new AgentViewModel
             {
                 AgentName = agent.AgentDesc,
-                
+
             };
 
             return result;
         }
 
-        private static Tuple<List<SaleDetailViewModel>, decimal> ToTotalSalesPerMonthVM(this List<ARPatientBill> patientBills,
-            IEnumerable<QBWCMEMBERS> bWCMEMBERs)
+        private static bool IsServicesTargetMet()
         {
-            var saleDetailVMList = new List<SaleDetailViewModel>();
-            decimal totalSales = 0;
+            var result = false;
 
 
-            foreach (var item in patientBills)
-            {
-                
-                var model = new SaleDetailViewModel
-                {
-                    HN = item.PAPMI_No,
-                    Episode = item.EpisodeNo,
-                    Date = item.EpisodeDate,
-                    Membership = 0,
-                    ServiceMember = 0,
-                    ServiceNonMember = 0,
-                    CompoundingMember = 0,
-                    CompoundingNonMember = 0,
-                    TotalAmount = 0,
-                    Commission = 0
-                };
-            }
-
-            return Tuple.Create(saleDetailVMList, totalSales);
+            return result;
         }
     }
 }
