@@ -19,6 +19,7 @@ namespace AgentReferralSystem.Api.Data.Models.Calc
         public decimal BaseCommission { get; set; }
 
         public decimal Target { get; set; }
+        public decimal TargetSum { get; set; }
 
         public int TargetPeriod { get; set; }
         public int TargetPeriodMonth { get; set; }
@@ -29,5 +30,7 @@ namespace AgentReferralSystem.Api.Data.Models.Calc
 
         public int ResetToBase { get; set; }
         public int ResetToBaseMonth { get; set; }
+
+        public decimal Commission { get; set; }
     }
 }

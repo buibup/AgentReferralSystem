@@ -24,6 +24,15 @@ namespace AgentReferralSystem.Api.Data.ViewModels
         public int MembershipCount { get; set; }
         public int BWCServicesCount { get; set; }
         public decimal TotalSales { get; set; }
+        public decimal ServiceMemberSum { get; set; }
+        public decimal ServiceMemberCommission { get; set; }
+        public decimal ServiceNonMemberSum { get; set; }
+        public decimal ServiceNonMemberSumCommission { get; set; }
+        public decimal CompoundingMemberSum { get; set; }
+        public decimal CompoundingMemberSumCommission { get; set; }
+        public decimal CompoundingNonMemberSum { get; set; }
+        public decimal CompoundingNonMemberSumCommission { get; set; }
+        public decimal CommissionSum { get; set; }
     }
 
     public class SaleDetailViewModel

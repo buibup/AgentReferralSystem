@@ -53,6 +53,7 @@ namespace AgentReferralSystem.Api.Data.Services
                 {
                     BaseCommission = membershipObject.BaseCommission,
                     Target = membershipObject.Target,
+                    TargetSum = 0,
                     TargetPeriod = membershipObject.TargetPeriod,
                     TargetPeriodMonth = 0,
                     IncreaseIfTargetMet = membershipObject.IncreaseIfTargetMet,
@@ -64,6 +65,7 @@ namespace AgentReferralSystem.Api.Data.Services
                 {
                     BaseCommission = serviceMemberObject.BaseCommission,
                     Target = serviceMemberObject.Target,
+                    TargetSum = 0,
                     TargetPeriod = serviceMemberObject.TargetPeriod,
                     TargetPeriodMonth = 0,
                     IncreaseIfTargetMet = serviceMemberObject.IncreaseIfTargetMet,
@@ -75,6 +77,7 @@ namespace AgentReferralSystem.Api.Data.Services
                 {
                     BaseCommission = serviceNonMemberObject.BaseCommission,
                     Target = serviceNonMemberObject.Target,
+                    TargetSum = 0,
                     TargetPeriod = serviceNonMemberObject.TargetPeriod,
                     TargetPeriodMonth = 0,
                     IncreaseIfTargetMet = serviceNonMemberObject.IncreaseIfTargetMet,
@@ -86,6 +89,7 @@ namespace AgentReferralSystem.Api.Data.Services
                 {
                     BaseCommission = compoundingMemberObject.BaseCommission,
                     Target = compoundingMemberObject.Target,
+                    TargetSum = 0,
                     TargetPeriod = compoundingMemberObject.TargetPeriod,
                     TargetPeriodMonth = 0,
                     IncreaseIfTargetMet = compoundingMemberObject.IncreaseIfTargetMet,
@@ -97,6 +101,7 @@ namespace AgentReferralSystem.Api.Data.Services
                 {
                     BaseCommission = compoundingNonMemberObject.BaseCommission,
                     Target = compoundingNonMemberObject.Target,
+                    TargetSum = 0,
                     TargetPeriod = compoundingNonMemberObject.TargetPeriod,
                     TargetPeriodMonth = 0,
                     IncreaseIfTargetMet = compoundingNonMemberObject.IncreaseIfTargetMet,
@@ -105,10 +110,6 @@ namespace AgentReferralSystem.Api.Data.Services
                     ResetToBaseMonth = 0
                 }
             };
-
-
-            var monthCountResetToBase = 0;
-            var monthCountCommTarget = 0;
 
             while (start < agent.EndDate)
             {
@@ -132,6 +133,7 @@ namespace AgentReferralSystem.Api.Data.Services
 
                 // patient non member
                 var patientBillNonmemberList = patientBillListOnCurrent.Where(p => !memberPapmiDrList.Any(p2 => p2 == p.PAADM_PAPMI_DR)).ToList();
+
 
                 // add item member
                 foreach (var item in patientBillMemberList)
@@ -161,6 +163,9 @@ namespace AgentReferralSystem.Api.Data.Services
                             Commission = commisson
                         };
 
+                        // sum target bath
+                        agentCalc.CompoundingMember.TargetSum += commisson;
+
                         saleDetailList.Add(model);
                     }
                     else // service member
@@ -186,6 +191,9 @@ namespace AgentReferralSystem.Api.Data.Services
                             TotalAmount = 0,
                             Commission = commisson
                         };
+
+                        // sum target bath
+                        agentCalc.ServiceMember.TargetSum += commisson;
 
                         saleDetailList.Add(model);
                     }
@@ -222,9 +230,12 @@ namespace AgentReferralSystem.Api.Data.Services
                             Commission = commisson
                         };
 
+                        // sum target bath
+                        agentCalc.CompoundingNonMember.TargetSum += commisson;
+
                         saleDetailList.Add(model);
                     }
-                    else // not compounding nonmember
+                    else // service nonmember
                     {
                         try
                         {
@@ -249,12 +260,85 @@ namespace AgentReferralSystem.Api.Data.Services
                             Commission = commisson
                         };
 
+                        // sum target bath
+                        agentCalc.ServiceNonMember.TargetSum += commisson;
+
                         saleDetailList.Add(model);
                     }
 
                     totalSale += commisson;
+                } 
+
+
+                
+
+                // add target period month
+                agentCalc.Membership.TargetPeriodMonth += 1;
+                agentCalc.ServiceMember.TargetPeriodMonth += 1;
+                agentCalc.ServiceNonMember.TargetPeriodMonth += 1;
+                agentCalc.CompoundingMember.TargetPeriodMonth += 1;
+                agentCalc.CompoundingNonMember.TargetPeriodMonth += 1;
+
+                // add reset to base month
+                agentCalc.Membership.ResetToBaseMonth += 1;
+                agentCalc.ServiceMember.ResetToBaseMonth += 1;
+                agentCalc.ServiceNonMember.ResetToBaseMonth += 1;
+                agentCalc.CompoundingMember.ResetToBaseMonth += 1;
+                agentCalc.CompoundingNonMember.ResetToBaseMonth += 1;
+
+                #region target met
+                // is service member target met 
+                if (agentCalc.ServiceMember.TargetSum >= agentCalc.ServiceMember.Target)
+                {
+                    // check maximum
+                    if(agentCalc.ServiceMember.BaseCommission < agentCalc.ServiceMember.Maximum)
+                    {
+                        // add base commission
+                        agentCalc.ServiceMember.BaseCommission += agentCalc.ServiceMember.IncreaseIfTargetMet;
+                    }
+                }
+                // calc service member commission
+                agentCalc.ServiceMember.Commission = (agentCalc.ServiceMember.TargetSum * agentCalc.ServiceMember.BaseCommission) / 100;
+
+                if(agentCalc.ServiceMember.ResetToBaseMonth >= agentCalc.ServiceMember.ResetToBase)
+                {
+                    // reset service member
                 }
 
+
+                // is non service member target met 
+                if (agentCalc.ServiceNonMember.TargetSum >= agentCalc.ServiceNonMember.Target)
+                {
+                    // check maximum
+                    if (agentCalc.ServiceNonMember.BaseCommission < agentCalc.ServiceNonMember.Maximum)
+                    {
+                        // add base commission
+                        agentCalc.ServiceNonMember.BaseCommission += agentCalc.ServiceNonMember.IncreaseIfTargetMet;
+                    }
+                }
+
+                // is compounding member target met 
+                if (agentCalc.CompoundingMember.TargetSum >= agentCalc.CompoundingMember.Target)
+                {
+                    // check maximum
+                    if (agentCalc.CompoundingMember.BaseCommission < agentCalc.CompoundingMember.Maximum)
+                    {
+                        // add base commission
+                        agentCalc.CompoundingMember.BaseCommission += agentCalc.CompoundingMember.IncreaseIfTargetMet;
+                    }
+                }
+
+                // is non compounding member target met  
+                if (agentCalc.CompoundingNonMember.TargetSum >= agentCalc.CompoundingNonMember.Target)
+                {
+                    // check maximum
+                    if (agentCalc.CompoundingNonMember.BaseCommission < agentCalc.CompoundingNonMember.Maximum)
+                    {
+                        // add base commission
+                        agentCalc.CompoundingNonMember.BaseCommission += agentCalc.CompoundingNonMember.IncreaseIfTargetMet;
+                    }
+                }
+                #endregion
 
                 var totalSalesPerMonth = new TotalSalesPerMonthViewModel
                 {
@@ -263,28 +347,15 @@ namespace AgentReferralSystem.Api.Data.Services
                     MembershipCount = membersThisMonth.Count,
                     BWCServicesCount = papmiDRList.Count,
                     TotalSales = totalSale,
+
                 };
 
                 totalSalesPerMonths.Add(totalSalesPerMonth);
 
-                // if target met
-
                 // add month
                 start = agent.StartDate.AddMonths(1);
 
-                monthCountResetToBase += 1;
-                monthCountCommTarget += 1;
-
-                // month count more then month setup? reset to base
-                if (monthCountResetToBase > membershipObject.ResetToBase)
-                {
-                    goto ResetToBase;
-                }
-
-
-                if (monthCountCommTarget > membershipObject.TargetPeriod)
-                {
-                }
+                // reset to base
 
             }
 
