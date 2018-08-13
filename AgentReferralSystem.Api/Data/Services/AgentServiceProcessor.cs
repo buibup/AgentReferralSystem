@@ -1,4 +1,5 @@
 ﻿using AgentReferralSystem.Api.Data.Models.Cache;
+using AgentReferralSystem.Api.Data.Models.Calc;
 using AgentReferralSystem.Api.Data.Models.SqlServer;
 using AgentReferralSystem.Api.Data.ViewModels;
 using System;
@@ -46,13 +47,63 @@ namespace AgentReferralSystem.Api.Data.Services
                 .Select(d => new { d.BaseCommission, d.Target, d.TargetPeriod, d.ResetToBase, d.IncreaseIfTargetMet, d.Maximum }).FirstOrDefault();
             #endregion
 
-            var agentCalc = new
+            var agentCalc = new AgentCalc
             {
-                Membership = membershipObject,
-                ServiceMember = serviceMemberObject,
-                ServiceNonMember = serviceNonMemberObject,
-                CompoundingMember = compoundingMemberObject,
-                CompoundingNonMember = compoundingNonMemberObject
+                Membership = new Calc
+                {
+                    BaseCommission = membershipObject.BaseCommission,
+                    Target = membershipObject.Target,
+                    TargetPeriod = membershipObject.TargetPeriod,
+                    TargetPeriodMonth = 0,
+                    IncreaseIfTargetMet = membershipObject.IncreaseIfTargetMet,
+                    Maximum = membershipObject.Maximum,
+                    ResetToBase = membershipObject.ResetToBase,
+                    ResetToBaseMonth = 0
+                },
+                ServiceMember = new Calc
+                {
+                    BaseCommission = serviceMemberObject.BaseCommission,
+                    Target = serviceMemberObject.Target,
+                    TargetPeriod = serviceMemberObject.TargetPeriod,
+                    TargetPeriodMonth = 0,
+                    IncreaseIfTargetMet = serviceMemberObject.IncreaseIfTargetMet,
+                    Maximum = serviceMemberObject.Maximum,
+                    ResetToBase = serviceMemberObject.ResetToBase,
+                    ResetToBaseMonth = 0
+                },
+                ServiceNonMember = new Calc
+                {
+                    BaseCommission = serviceNonMemberObject.BaseCommission,
+                    Target = serviceNonMemberObject.Target,
+                    TargetPeriod = serviceNonMemberObject.TargetPeriod,
+                    TargetPeriodMonth = 0,
+                    IncreaseIfTargetMet = serviceNonMemberObject.IncreaseIfTargetMet,
+                    Maximum = serviceNonMemberObject.Maximum,
+                    ResetToBase = serviceNonMemberObject.ResetToBase,
+                    ResetToBaseMonth = 0
+                },
+                CompoundingMember = new Calc
+                {
+                    BaseCommission = compoundingMemberObject.BaseCommission,
+                    Target = compoundingMemberObject.Target,
+                    TargetPeriod = compoundingMemberObject.TargetPeriod,
+                    TargetPeriodMonth = 0,
+                    IncreaseIfTargetMet = compoundingMemberObject.IncreaseIfTargetMet,
+                    Maximum = compoundingMemberObject.Maximum,
+                    ResetToBase = compoundingMemberObject.ResetToBase,
+                    ResetToBaseMonth = 0
+                },
+                CompoundingNonMember = new Calc
+                {
+                    BaseCommission = compoundingNonMemberObject.BaseCommission,
+                    Target = compoundingNonMemberObject.Target,
+                    TargetPeriod = compoundingNonMemberObject.TargetPeriod,
+                    TargetPeriodMonth = 0,
+                    IncreaseIfTargetMet = compoundingNonMemberObject.IncreaseIfTargetMet,
+                    Maximum = compoundingNonMemberObject.Maximum,
+                    ResetToBase = compoundingNonMemberObject.ResetToBase,
+                    ResetToBaseMonth = 0
+                }
             };
 
 
