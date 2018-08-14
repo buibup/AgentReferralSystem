@@ -24,7 +24,7 @@ namespace AgentReferralSystem.Api.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        [HttpGet("{agentId}", Name = "GetAgentReportById")]
+        [HttpGet("GetAgentReportById/{agentId}")]
         public async Task<IActionResult> GetAgentViewModelByAgentIdAsync(int agentId)
         {
             var result = await _agentService.GetAgentViewModelByAgentIdAsync(agentId);

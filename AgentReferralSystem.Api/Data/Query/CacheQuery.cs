@@ -69,13 +69,29 @@ namespace AgentReferralSystem.Api.Data.Query
                 ORDER BY ID DESC";
         }
 
-        public static string GetQBWCMEMBERSByPapmiRowIdList()
+        public static string GetQBWCMEMBERSByPapmiRowIdList(IEnumerable<int> rowIdList)
         {
-            return @"
+            string _rowIdList = "";
+
+            foreach(var id in rowIdList)
+            {
+                if (string.IsNullOrEmpty(_rowIdList))
+                {
+                    _rowIdList += id;
+                }
+                else
+                {
+                    _rowIdList += $", {id}";
+                }
+            }
+
+            var query = $@"
                 SELECT ID, QUESPAAdmDR, QUESPAPatMasDR,
 	                QDateFrom, QDateTO
                 FROM questionnaire.QBWCMEMBERS	
-                WHERE QUESPAPatMasDR IN @rowIdList";
+                WHERE QUESPAPatMasDR IN ({_rowIdList})";
+
+            return query;
         }
     }
 }

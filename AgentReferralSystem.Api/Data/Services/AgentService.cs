@@ -30,7 +30,7 @@ namespace AgentReferralSystem.Api.Data.Services
             var patientsBills = await _cacheDataAccess.GetARPatientsBillsByReferralTypeRowIdAsync(agentId);
 
             // distinct patients by papmiRowId
-            var papmiRowIdList = patientsBills.Select(p => p.PAADM_PAPMI_DR).Distinct().ToList();
+            var papmiRowIdList = patientsBills.Select(p => p.PAADM_PAPMI_DR).Distinct();
 
             // get all patient register membership
             var memberRegisList = await _cacheDataAccess.GetQBWCMEMBERSByPapmiRowIdListAsync(papmiRowIdList);

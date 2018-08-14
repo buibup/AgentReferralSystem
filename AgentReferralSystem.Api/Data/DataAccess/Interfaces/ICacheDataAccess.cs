@@ -12,6 +12,6 @@ namespace AgentReferralSystem.Api.Data.DataAccess.Interfaces
         Task<IEnumerable<ARPatientBill>> GetARPatientsBillsByReferralTypeRowIdAsync(int rowId);
         Task<IEnumerable<ARCItmMast>> GetARCItmMastCompoundingAsync();
         Task<QBWCMEMBERS> GetQBWCMEMBERSByPapmiRowIdAsync(int papmiRowId);
-        Task<IEnumerable<QBWCMEMBERS>> GetQBWCMEMBERSByPapmiRowIdListAsync(List<int> papmiRowIdList);
+        Task<IEnumerable<QBWCMEMBERS>> GetQBWCMEMBERSByPapmiRowIdListAsync(IEnumerable<int> papmiRowIdList);
     }
 }
