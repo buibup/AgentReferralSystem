@@ -8,6 +8,7 @@ namespace AgentReferralSystem.Api.Data.ViewModels
         public string AgentName { get; set; }
         public List<TotalSalesPerYearViewModel> TotalSalesPerYear { get; set; }
         public decimal TotalSales { get; set; }
+        public decimal TotalCommission { get; set; }
     }
 
     public class TotalSalesPerYearViewModel
@@ -15,6 +16,7 @@ namespace AgentReferralSystem.Api.Data.ViewModels
         public int Year { get; set; }
         public List<TotalSalesPerMonthViewModel> TotalSalesPerMonth { get; set; }
         public decimal TotalSales { get; set; }
+        public decimal TotalCommission { get; set; }
     }
 
     public class TotalSalesPerMonthViewModel
@@ -25,7 +27,7 @@ namespace AgentReferralSystem.Api.Data.ViewModels
         public int BWCServicesCount { get; set; }
         public decimal TotalSales { get; set; }
         public decimal ServiceMemberSum { get; set; }
-        public decimal ServiceMemberCommission { get; set; }
+        public decimal ServiceMemberSumCommission { get; set; }
         public decimal ServiceNonMemberSum { get; set; }
         public decimal ServiceNonMemberSumCommission { get; set; }
         public decimal CompoundingMemberSum { get; set; }

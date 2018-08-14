@@ -37,6 +37,8 @@ namespace AgentReferralSystem.Api.Data.Services
 
             var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
 
+            result = agent.AgentViewModelProcess(patientsBills, memberRegisList, itemCompoundingList);
+
             return result;
         }
     }
