@@ -119,6 +119,7 @@ namespace AgentReferralSystem.Api.Data.Services
             {
                 decimal totalSalesYear = 0;
                 decimal totalCommissionYear = 0;
+                TotalSalesPerYearViewModel totalSalesPerYear = null;
 
                 while (start < agent.EndDate && start.Year == year)
                 {
@@ -391,17 +392,17 @@ namespace AgentReferralSystem.Api.Data.Services
                         // add month
                         start = start.AddMonths(1);
 
-                        var totalSalesPerYear = new TotalSalesPerYearViewModel
+                        totalSalesPerYear = new TotalSalesPerYearViewModel
                         {
                             Year = year,
                             TotalSalesPerMonth = totalSalesPerMonths,
                             TotalSales = totalSalesYear,
                             TotalCommission = totalCommissionYear
                         };
-
-                        totalSalesPerYears.Add(totalSalesPerYear);
                     }
                 }
+
+                totalSalesPerYears.Add(totalSalesPerYear);
             }
 
             var result = new AgentViewModel
@@ -411,14 +412,6 @@ namespace AgentReferralSystem.Api.Data.Services
                 TotalSales = totalSalesAgent,
                 TotalCommission = totalCommissionAgent
             };
-
-            return result;
-        }
-
-        private static bool IsServicesTargetMet()
-        {
-            var result = false;
-
 
             return result;
         }
