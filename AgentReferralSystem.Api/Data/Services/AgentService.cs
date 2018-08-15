@@ -1,4 +1,5 @@
 ﻿using AgentReferralSystem.Api.Data.DataAccess.Interfaces;
+using AgentReferralSystem.Api.Data.Models.Cache;
 using AgentReferralSystem.Api.Data.Moq;
 using AgentReferralSystem.Api.Data.Services.Interfaces;
 using AgentReferralSystem.Api.Data.ViewModels;
@@ -38,6 +39,13 @@ namespace AgentReferralSystem.Api.Data.Services
             var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
 
             result = agent.AgentViewModelProcess(patientsBills, memberRegisList, itemCompoundingList);
+
+            return result;
+        }
+
+        public async Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync()
+        {
+            var result = await _cacheDataAccess.GetPACReferralTypeAllAsync();
 
             return result;
         }

@@ -1,4 +1,5 @@
-﻿using AgentReferralSystem.Api.Data.ViewModels;
+﻿using AgentReferralSystem.Api.Data.Models.Cache;
+using AgentReferralSystem.Api.Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
     public interface IAgentService
     {
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
+        Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync();
     }
 }

@@ -18,11 +18,6 @@ namespace AgentReferralSystem.Api.Controllers
             _agentService = agentService;
         }
 
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
 
         [HttpGet("GetAgentReportById/{agentId}")]
         public async Task<IActionResult> GetAgentViewModelByAgentIdAsync(int agentId)
@@ -34,22 +29,14 @@ namespace AgentReferralSystem.Api.Controllers
             return Ok(result);
         }
 
-        // POST: api/Agents
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("GetPACReferralTypes")]
+        public async Task<IActionResult> GetPACReferralTypesAsync()
         {
-        }
+            var result = await _agentService.GetPACReferralTypesAsync();
 
-        // PUT: api/Agents/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+            if (result == null) return NotFound();
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return Ok(result);
         }
     }
 }
