@@ -13,6 +13,7 @@ namespace AgentReferralSystem.Api.Data.Models.SqlServer
         public DateTime AgreementDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string Remark { get; set; }
 
         public List<AgentsSaleTypes> AgentSaleTypes { get; set; }
     }
