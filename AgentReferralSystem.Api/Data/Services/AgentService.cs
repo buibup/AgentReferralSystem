@@ -1,5 +1,7 @@
 ﻿using AgentReferralSystem.Api.Data.DataAccess.Interfaces;
+using AgentReferralSystem.Api.Data.Models;
 using AgentReferralSystem.Api.Data.Models.Cache;
+using AgentReferralSystem.Api.Data.Models.SqlServer;
 using AgentReferralSystem.Api.Data.Moq;
 using AgentReferralSystem.Api.Data.Services.Interfaces;
 using AgentReferralSystem.Api.Data.ViewModels;
@@ -20,6 +22,22 @@ namespace AgentReferralSystem.Api.Data.Services
             _cacheDataAccess = cacheDataAccess;
             _sqlServerDataAccess = sqlServerDataAccess;
         }
+
+        public Task AddAgentAsync(Agent agent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAgentAsync(int agentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AgentOutput> GetAgentByIdAsync(int agentId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId)
         {
             var result = new AgentViewModel();

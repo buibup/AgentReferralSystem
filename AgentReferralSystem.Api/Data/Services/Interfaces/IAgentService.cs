@@ -1,4 +1,6 @@
-﻿using AgentReferralSystem.Api.Data.Models.Cache;
+﻿using AgentReferralSystem.Api.Data.Models;
+using AgentReferralSystem.Api.Data.Models.Cache;
+using AgentReferralSystem.Api.Data.Models.SqlServer;
 using AgentReferralSystem.Api.Data.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,5 +13,8 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
     {
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
         Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync();
+        Task<AgentOutput> GetAgentByIdAsync(int agentId);
+        Task AddAgentAsync(Agent agent);
+        Task DeleteAgentAsync(int agentId);
     }
 }
