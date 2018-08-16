@@ -24,8 +24,10 @@ namespace AgentReferralSystem.Api.Data.Services
         {
             var result = new AgentViewModel();
 
-            // get agent
-            var agent = AgentMoq.GetAgentByAgentId(agentId);
+            // get agent moq
+            //var agent = AgentMoq.GetAgentByAgentId(agentId);
+
+            var agent = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
 
             // get all patientbill of agent
             var patientsBills = await _cacheDataAccess.GetARPatientsBillsByReferralTypeRowIdAsync(agentId);

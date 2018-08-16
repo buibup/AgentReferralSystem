@@ -15,6 +15,6 @@ namespace AgentReferralSystem.Api.Data.Models
         public DateTime EndDate { get; set; }
         public string Remark { get; set; }
 
-        public ICollection<SaleTypesOutput> SaleTypes { get; set; }
+        public ICollection<SaleTypesOutput> AgentSaleTypes { get; set; }
     }
 }

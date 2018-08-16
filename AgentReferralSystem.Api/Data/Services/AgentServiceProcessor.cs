@@ -1,4 +1,5 @@
-﻿using AgentReferralSystem.Api.Data.Models.Cache;
+﻿using AgentReferralSystem.Api.Data.Models;
+using AgentReferralSystem.Api.Data.Models.Cache;
 using AgentReferralSystem.Api.Data.Models.Calc;
 using AgentReferralSystem.Api.Data.Models.SqlServer;
 using AgentReferralSystem.Api.Data.ViewModels;
@@ -11,7 +12,7 @@ namespace AgentReferralSystem.Api.Data.Services
 {
     public static class AgentServiceProcessor
     {
-        public static AgentViewModel AgentViewModelProcess(this Agent agent,
+        public static AgentViewModel AgentViewModelProcess(this AgentOutput agent,
             IEnumerable<ARPatientBill> patientBills,
             IEnumerable<QBWCMEMBERS> memberRegisList,
             IEnumerable<ARCItmMast> itemCompoundingList)
