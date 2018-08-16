@@ -1,4 +1,5 @@
-﻿using AgentReferralSystem.Api.Data.Models.SqlServer;
+﻿using AgentReferralSystem.Api.Data.Models;
+using AgentReferralSystem.Api.Data.Models.SqlServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,8 @@ namespace AgentReferralSystem.Api.Data.DataAccess.Interfaces
 {
     public interface ISqlServerDataAccess
     {
-        Task<Agent> GetAgentById(int agentId);
+        Task<AgentOutput> GetAgentByIdAsync(int agentId);
+        Task AddAgentAsync(Agent agent);
+        Task DeleteAgentAsync(int agentId);
     }
 }
