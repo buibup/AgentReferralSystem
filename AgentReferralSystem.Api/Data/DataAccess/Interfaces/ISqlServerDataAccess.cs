@@ -10,7 +10,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess.Interfaces
     public interface ISqlServerDataAccess
     {
         Task<AgentOutput> GetAgentByIdAsync(int agentId);
-        Task AddAgentAsync(Agent agent);
+        Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);
     }
 }

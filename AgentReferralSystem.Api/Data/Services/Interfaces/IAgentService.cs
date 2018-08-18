@@ -14,7 +14,7 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
         Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync();
         Task<AgentOutput> GetAgentByIdAsync(int agentId);
-        Task AddAgentAsync(Agent agent);
+        Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);
     }
 }

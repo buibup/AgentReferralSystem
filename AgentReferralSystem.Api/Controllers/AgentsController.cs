@@ -50,27 +50,17 @@ namespace AgentReferralSystem.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("AddAgent")]
+        [HttpPost("AddOrUpdateAgent")]
         public async Task<IActionResult> AddAgentAsync(Agent agent)
         {
             if (agent == null) return BadRequest();
 
-            await _agentService.AddAgentAsync(agent);
+            await _agentService.AddOrUpdateAgentAsync(agent);
 
             return Ok();
         }
 
-        [HttpPut("UpdateAgent")]
-        public async Task<IActionResult> UpdateAgentAsync(Agent agent)
-        {
-            if (agent == null) return BadRequest();
-
-            await _agentService.AddAgentAsync(agent);
-
-            return NoContent();
-        }
-
-        [HttpDelete("DeleteAgent")]
+        [HttpDelete("DeleteAgent/{agentId}")]
         public async Task<IActionResult> DeleteAgentAsync(int agentId)
         {
             await _agentService.DeleteAgentAsync(agentId);

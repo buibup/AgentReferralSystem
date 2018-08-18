@@ -20,7 +20,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             _connectionStrings = connectionStrings;
         }
 
-        public async Task AddAgentAsync(Agent agent)
+        public async Task AddOrUpdateAgentAsync(Agent agent)
         {
             using(var conn = new SqlConnection(_connectionStrings.SqlServer))
             {

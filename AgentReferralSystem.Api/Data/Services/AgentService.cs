@@ -23,9 +23,9 @@ namespace AgentReferralSystem.Api.Data.Services
             _sqlServerDataAccess = sqlServerDataAccess;
         }
 
-        public async Task AddAgentAsync(Agent agent)
+        public async Task AddOrUpdateAgentAsync(Agent agent)
         {
-            await _sqlServerDataAccess.AddAgentAsync(agent);
+            await _sqlServerDataAccess.AddOrUpdateAgentAsync(agent);
         }
 
         public async Task DeleteAgentAsync(int agentId)
