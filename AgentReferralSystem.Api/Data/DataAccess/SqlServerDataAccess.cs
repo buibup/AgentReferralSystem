@@ -75,7 +75,11 @@ namespace AgentReferralSystem.Api.Data.DataAccess
 
                 agent = (await conn.QueryAsync<AgentOutput>("GetAgentById", p, commandType: CommandType.StoredProcedure)).ToList().FirstOrDefault();
 
-                agent.AgentSaleTypes = (await conn.QueryAsync<SaleTypesOutput>("GetSaleTypeByAgentId", p, commandType: CommandType.StoredProcedure)).ToList();
+                if(agent != null)
+                {
+                    agent.AgentSaleTypes = (await conn.QueryAsync<SaleTypesOutput>("GetSaleTypeByAgentId", p, commandType: CommandType.StoredProcedure)).ToList();
+                }
+                
             }
 
             return agent;

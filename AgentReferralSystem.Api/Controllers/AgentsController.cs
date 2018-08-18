@@ -51,7 +51,7 @@ namespace AgentReferralSystem.Api.Controllers
         }
 
         [HttpPost("AddOrUpdateAgent")]
-        public async Task<IActionResult> AddAgentAsync(Agent agent)
+        public async Task<IActionResult> AddOrUpdateAgentAsync(Agent agent)
         {
             if (agent == null) return BadRequest();
 
