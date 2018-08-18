@@ -50,17 +50,20 @@ namespace AgentReferralSystem.Api.Data.Services
             var agent = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
 
             // get all patientbill of agent
-            var patientsBills = await _cacheDataAccess.GetARPatientsBillsByReferralTypeRowIdAsync(agentId);
+            var patientsBills = (await _cacheDataAccess.GetARPatientsBillsByReferralTypeRowIdAsync(agentId)).ToList();
 
-            // distinct patients by papmiRowId
-            var papmiRowIdList = patientsBills.Select(p => p.PAADM_PAPMI_DR).Distinct();
+            if(patientsBills.Count > 0)
+            {
+                // distinct patients by papmiRowId
+                var papmiRowIdList = patientsBills.Select(p => p.PAADM_PAPMI_DR).Distinct();
 
-            // get all patient register membership
-            var memberRegisList = await _cacheDataAccess.GetQBWCMEMBERSByPapmiRowIdListAsync(papmiRowIdList);
+                // get all patient register membership
+                var memberRegisList = await _cacheDataAccess.GetQBWCMEMBERSByPapmiRowIdListAsync(papmiRowIdList);
 
-            var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
+                var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
 
-            result = agent.AgentViewModelProcess(patientsBills, memberRegisList, itemCompoundingList);
+                result = agent.AgentViewModelProcess(patientsBills, memberRegisList, itemCompoundingList);
+            }
 
             return result;
         }

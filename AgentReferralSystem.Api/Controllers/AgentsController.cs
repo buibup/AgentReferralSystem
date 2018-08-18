@@ -25,7 +25,7 @@ namespace AgentReferralSystem.Api.Controllers
         {
             var result = await _agentService.GetAgentViewModelByAgentIdAsync(agentId);
 
-            if (result == null) return NotFound();
+            if (result == null || string.IsNullOrEmpty(result.AgentName)) return NotFound();
 
             return Ok(result);
         }
