@@ -80,7 +80,7 @@ AS
 BEGIN  
     SET NOCOUNT ON;  
     SELECT a.AgentId, a.AgentCode, a.AgentDesc,
-		a.AgreementDate, a.DateFrom, a.DateTo,
+		a.AgreementDate, a.DateFrom StartDate, a.DateTo EndDate,
 		a.Remark
 	FROM Agent a
 	
