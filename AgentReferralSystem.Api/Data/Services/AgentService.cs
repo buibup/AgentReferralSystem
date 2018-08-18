@@ -23,19 +23,21 @@ namespace AgentReferralSystem.Api.Data.Services
             _sqlServerDataAccess = sqlServerDataAccess;
         }
 
-        public Task AddAgentAsync(Agent agent)
+        public async Task AddAgentAsync(Agent agent)
         {
-            throw new NotImplementedException();
+            await _sqlServerDataAccess.AddAgentAsync(agent);
         }
 
-        public Task DeleteAgentAsync(int agentId)
+        public async Task DeleteAgentAsync(int agentId)
         {
-            throw new NotImplementedException();
+            await _sqlServerDataAccess.DeleteAgentAsync(agentId);
         }
 
-        public Task<AgentOutput> GetAgentByIdAsync(int agentId)
+        public async Task<AgentOutput> GetAgentByIdAsync(int agentId)
         {
-            throw new NotImplementedException();
+            var model = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
+
+            return model;
         }
 
         public async Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId)

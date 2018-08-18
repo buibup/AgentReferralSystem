@@ -8,8 +8,6 @@ namespace AgentReferralSystem.Api.Data.Models.SqlServer
 {
     public class AgentsSaleTypes
     {
-        public int Id { get; set; }
-
         [Column(TypeName = "decimal(3, 2)")]
         public decimal BaseCommission { get; set; }
 

@@ -12,7 +12,6 @@ namespace AgentReferralSystem.Api.Data.Moq
         {
             new AgentsSaleTypes
             {
-                Id = 1,
                 AgentId = 235,
                 SaleTypeId = 1,
                 BaseCommission = 2.5m,
@@ -25,7 +24,6 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new AgentsSaleTypes
             {
-                Id = 2,
                 AgentId = 235,
                 SaleTypeId = 2,
                 BaseCommission = 6,
@@ -38,7 +36,6 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new AgentsSaleTypes
             {
-                Id = 3,
                 AgentId = 235,
                 SaleTypeId = 3,
                 BaseCommission = 6,
@@ -51,7 +48,6 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new AgentsSaleTypes
             {
-                Id = 4,
                 AgentId = 235,
                 SaleTypeId = 4,
                 BaseCommission = 6,
@@ -64,7 +60,6 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new AgentsSaleTypes
             {
-                Id = 5,
                 AgentId = 235,
                 SaleTypeId = 5,
                 BaseCommission = 6,
