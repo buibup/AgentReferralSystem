@@ -1,13 +1,18 @@
-﻿using System;
+﻿using EPPlus.Core.Extensions;
+using System;
 using System.Collections.Generic;
 
 namespace AgentReferralSystem.Api.Data.ViewModels
 {
+    [ExcelWorksheet("Agent")]
     public class AgentViewModel
     {
+        [ExcelTableColumn("AgentName")]
         public string AgentName { get; set; }
         public List<TotalSalesPerYearViewModel> TotalSalesPerYear { get; set; }
+        [ExcelTableColumn("TotalSales")]
         public decimal TotalSales { get; set; }
+        [ExcelTableColumn("TotalCommission")]
         public decimal TotalCommission { get; set; }
     }
 

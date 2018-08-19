@@ -5,11 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Export\" />
+    <Folder Include="Data\Models\ExcelTemplate\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="EPPlus.Core.Extensions" Version="2.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />

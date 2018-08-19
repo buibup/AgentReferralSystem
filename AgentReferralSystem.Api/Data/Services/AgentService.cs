@@ -5,9 +5,14 @@ using AgentReferralSystem.Api.Data.Models.SqlServer;
 using AgentReferralSystem.Api.Data.Moq;
 using AgentReferralSystem.Api.Data.Services.Interfaces;
 using AgentReferralSystem.Api.Data.ViewModels;
+using EPPlus.Core.Extensions;
+using Microsoft.AspNetCore.Hosting;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AgentReferralSystem.Api.Data.Services
@@ -16,11 +21,14 @@ namespace AgentReferralSystem.Api.Data.Services
     {
         private readonly ICacheDataAccess _cacheDataAccess;
         private readonly ISqlServerDataAccess _sqlServerDataAccess;
+        private readonly IHostingEnvironment _hostingEnvironment;
         public AgentService(ICacheDataAccess cacheDataAccess,
-            ISqlServerDataAccess sqlServerDataAccess)
+            ISqlServerDataAccess sqlServerDataAccess,
+            IHostingEnvironment hostingEnvironment)
         {
             _cacheDataAccess = cacheDataAccess;
             _sqlServerDataAccess = sqlServerDataAccess;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task AddOrUpdateAgentAsync(Agent agent)
@@ -73,6 +81,61 @@ namespace AgentReferralSystem.Api.Data.Services
             var result = await _cacheDataAccess.GetPACReferralTypeAllAsync();
 
             return result;
+        }
+
+        public async Task SaveExportAgentAsync(AgentViewModel model)
+        {
+            string sWebRootFolder = $@"{_hostingEnvironment.ContentRootPath}/Data/Export";
+            string sFileName = $"Agent-{model.AgentName}.xlsx";
+
+            await Task.Run(() =>
+            {
+                FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+                if (file.Exists)
+                {
+                    file.Delete();
+                    file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+                }
+
+                var data = model;
+
+                ExcelPackage excelPackage = Assembly.GetExecutingAssembly().GenerateExcelPackage(nameof(data));
+                excelPackage.SaveAs(file);
+
+                foreach(var item in data.TotalSalesPerYear)
+                {
+                    sFileName = $"Agent-{model.AgentName}-{item.Year}.xlsx";
+                    file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+                    if (file.Exists)
+                    {
+                        file.Delete();
+                        file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+                    }
+
+                    ExcelPackage excel = null;
+
+                    excel = item.TotalSalesPerMonth.ToWorksheet($"{item.Year}")
+                                    .WithConfiguration(configuration => configuration.WithColumnConfiguration(x => x.AutoFit()))
+                                    .WithColumn(x => x.Month, "Month")
+                                    .WithColumn(x => x.BWCServicesCount, "Bwc Service Count")
+                                    .WithColumn(x => x.CommissionSum, "Commission Sum")
+                                    .WithColumn(x => x.CompoundingMemberSum, "Compounding Member Sum")
+                                    .WithColumn(x => x.CompoundingMemberSumCommission, "Compounding Member Sum Commission")
+                                    .WithColumn(x => x.CompoundingNonMemberSum, "Compounding Non Member Sum")
+                                    .WithColumn(x => x.CompoundingNonMemberSumCommission, "Compounding Non Member Sum Commission")
+                                    .WithColumn(x => x.MembershipCount, "Membership Count")
+                                    .WithColumn(x => x.MembershipSum, "Membership Sum")
+                                    .WithColumn(x => x.MembershipSumCommission, "Membership Sum Commission")
+                                    .WithColumn(x => x.ServiceMemberSum, "Service Member Sum")
+                                    .WithColumn(x => x.ServiceMemberSumCommission, "Service Member Sum Commission")
+                                    .WithColumn(x => x.ServiceNonMemberSum, "Service Non Member Sum")
+                                    .WithColumn(x => x.ServiceNonMemberSumCommission, "Service Non Member Sum Commission")
+                                    .WithColumn(x => x.TotalSales, "Total Sales")
+                                    .WithTitle($"Summary commission of year {item.Year}")
+                                    .ToExcelPackage();
+                    excel.SaveAs(file);
+                }
+            });
         }
     }
 }

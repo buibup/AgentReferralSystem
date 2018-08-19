@@ -16,5 +16,6 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
         Task<AgentOutput> GetAgentByIdAsync(int agentId);
         Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);
+        Task SaveExportAgentAsync(AgentViewModel model);
     }
 }
