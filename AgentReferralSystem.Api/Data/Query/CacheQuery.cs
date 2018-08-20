@@ -25,7 +25,7 @@ namespace AgentReferralSystem.Api.Data.Query
                     ARPBL_PAADM_DR->PAADM_ADMNO EpisodeNo,
 	                ARPBL_AdmDate EpisodeDate,
 	                ARPBL_DischDate DischargeDate,
-	                ARPBL_DatePrinted DateBillPrinted,
+	                ARPBL_DatePrinted BillPrintedDate,
 	                ARPBL_InsuranceType_DR->INST_Desc,
 	                ARPBL_BillNo,
 	                ARPBL_TotalInsCo,

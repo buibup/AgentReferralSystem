@@ -12,8 +12,8 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
         public int ARPBL_PAADM_DR { get; set; }
         public string EpisodeNo { get; set; }
         public DateTime EpisodeDate { get; set; }
-        public DateTime DischargeDate { get; set; }
-        public DateTime DateBillPrinted { get; set; }
+        public DateTime? DischargeDate { get; set; } 
+        public DateTime? BillPrintedDate { get; set; }
         public string INST_Desc { get; set; }
         public string ARPBL_BillNo { get; set; }
         public decimal ARPBL_TotalInsCo { get; set; }
