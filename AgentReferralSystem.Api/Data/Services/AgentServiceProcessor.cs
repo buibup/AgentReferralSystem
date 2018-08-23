@@ -27,10 +27,10 @@ namespace AgentReferralSystem.Api.Data.Services
             decimal totalCommissionAgent = 0;
 
             // set agent start date
-            var start = agent.StartDate;
+            var agentStartDate = agent.StartDate;
 
             // get all year of patient
-            var years = patientBills.Select(d => d.EpisodeDate.Year).Distinct();
+            var patientYears = patientBills.Select(d => d.EpisodeDate.Year).Distinct();
 
             // set agent base
             var agentBase = agent;
@@ -40,27 +40,28 @@ namespace AgentReferralSystem.Api.Data.Services
             // set agent calc
             var agentCalc = agentsSaleTypes.GetSaleTypesCalc();
 
-
-            foreach (var year in years)
+            foreach (var patientYear in patientYears)
             {
+                // set variable year
                 decimal totalSalesYear = 0;
                 decimal totalCommissionYear = 0;
                 TotalSalesPerYearViewModel totalSalesPerYear = null;
 
-                while (start < agent.EndDate && start.Year == year)
+                while (agentStartDate < agent.EndDate && agentStartDate.Year == patientYear)
                 {
+                    // set variable month
                     var saleDetailList = new List<SaleDetailViewModel>();
-                    var currentYear = start.Year;
-                    var currentMonth = start.Month;
+                    var agentStartYear = agentStartDate.Year;
+                    var currentMonth = agentStartDate.Month;
                     decimal totalSalesMonth = 0;
 
-                    if (year == currentYear)
+                    if (patientYear == agentStartYear)
                     {
                         // filter patient on current month
-                        var patientBillListOnCurrent = patientBills.Where(pt => (pt.EpisodeDate.Year == currentYear) && (pt.EpisodeDate.Month == currentMonth)).ToList();
+                        var patientBillListOnCurrent = patientBills.Where(pt => (pt.EpisodeDate.Year == agentStartYear) && (pt.EpisodeDate.Month == currentMonth)).ToList();
 
                         // count membership on current month
-                        var membersThisMonth = memberRegisList.Where(m => (m.QDateFrom.Year == currentYear) && (m.QDateFrom.Month == currentMonth)).Select(m => m.QUESPAPatMasDR).Distinct().ToList();
+                        var membersThisMonth = memberRegisList.Where(m => (m.QDateFrom.Year == agentStartYear) && (m.QDateFrom.Month == currentMonth)).Select(m => m.QUESPAPatMasDR).Distinct().ToList();
 
                         // count all patient bwc services on current month
                         var papmiDRList = patientBillListOnCurrent.Select(p => p.PAADM_PAPMI_DR).Distinct().ToList();
@@ -73,12 +74,14 @@ namespace AgentReferralSystem.Api.Data.Services
                         // patient non member
                         var patientBillNonmemberList = patientBillListOnCurrent.Where(p => !memberPapmiDrList.Any(p2 => p2 == p.PAADM_PAPMI_DR)).ToList();
 
+                        var saleDetail = new SaleDetailViewModel();
 
                         #region calc membership
                         if (membersThisMonth.Count > 0)
                         {
-                            agentCalc.Membership.TargetSumMonth = membersThisMonth.Count * 3_000_000;
-                            agentCalc.Membership.TargetSum += membersThisMonth.Count * 3_000_000; ;
+                            var membersCalc = membersThisMonth.Count.MembersCalculate();
+                            agentCalc.Membership.TargetSumMonth = membersCalc;
+                            agentCalc.Membership.TargetSum += membersCalc;
                         }
                         #endregion
 
@@ -91,13 +94,11 @@ namespace AgentReferralSystem.Api.Data.Services
                                 HN = item.PAPMI_No,
                                 Episode = item.EpisodeNo,
                                 Date = item.EpisodeDate,
-                                Membership = 0,
                                 ServiceMember = 0,
                                 ServiceNonMember = 0,
                                 CompoundingMember = 0,
                                 CompoundingNonMember = 0,
-                                TotalAmount = 0,
-                                Commission = 0
+                                TotalAmount = 0
                             };
 
                             #region calc bwc service
@@ -108,14 +109,14 @@ namespace AgentReferralSystem.Api.Data.Services
                                     agentCalc.CompoundingMember.TargetSumMonth += item.ITM_LineTotal;
                                     agentCalc.CompoundingMember.TargetSum += item.ITM_LineTotal;
                                     model.CompoundingMember = item.ITM_LineTotal;
-                                    model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal,agentCalc.CompoundingMember.BaseCommission),100);
+                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.CompoundingMember.BaseCommission), 100);
                                 }
                                 else  // services
                                 {
                                     agentCalc.ServiceMember.TargetSumMonth += item.ITM_LineTotal;
                                     agentCalc.ServiceMember.TargetSum += item.ITM_LineTotal;
                                     model.ServiceMember = item.ITM_LineTotal;
-                                    model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal,agentCalc.ServiceMember.BaseCommission),100);
+                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.ServiceMember.BaseCommission), 100);
                                 }
                             }
                             else // non member
@@ -125,14 +126,14 @@ namespace AgentReferralSystem.Api.Data.Services
                                     agentCalc.CompoundingNonMember.TargetSumMonth += item.ITM_LineTotal;
                                     agentCalc.CompoundingNonMember.TargetSum += item.ITM_LineTotal;
                                     model.CompoundingNonMember = item.ITM_LineTotal;
-                                    model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal,agentCalc.CompoundingNonMember.BaseCommission),100);
+                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.CompoundingNonMember.BaseCommission), 100);
                                 }
                                 else  // services
                                 {
                                     agentCalc.ServiceNonMember.TargetSumMonth += item.ITM_LineTotal;
                                     agentCalc.ServiceNonMember.TargetSum += item.ITM_LineTotal;
                                     model.ServiceNonMember = item.ITM_LineTotal;
-                                    model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal,agentCalc.ServiceNonMember.BaseCommission),100);
+                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.ServiceNonMember.BaseCommission), 100);
                                 }
                             }
                             #endregion
@@ -140,6 +141,11 @@ namespace AgentReferralSystem.Api.Data.Services
                             saleDetailList.Add(model);
                         }
                         #endregion
+
+                        if (saleDetailList.Count > 0)
+                        {
+                            saleDetailList = saleDetailList.SaleDetailsGroupByEpiNo();
+                        }
 
                         totalSalesMonth = agentCalc.Membership.TargetSumMonth + agentCalc.ServiceMember.TargetSumMonth +
                             agentCalc.ServiceNonMember.TargetSumMonth + agentCalc.CompoundingMember.TargetSumMonth +
@@ -163,11 +169,11 @@ namespace AgentReferralSystem.Api.Data.Services
 
                         #region membership
                         // is membership target met
-                        if(agentCalc.Membership.TargetSum >= agentCalc.Membership.Target && 
+                        if (agentCalc.Membership.TargetSum >= agentCalc.Membership.Target &&
                             agentCalc.Membership.TargetPeriodMonth <= agentCalc.Membership.TargetPeriod)
                         {
                             // check maximum
-                            if(agentCalc.Membership.BaseCommission < agentCalc.Membership.Maximum)
+                            if (agentCalc.Membership.BaseCommission < agentCalc.Membership.Maximum)
                             {
                                 // add base commission
                                 agentCalc.Membership.BaseCommission += agentCalc.Membership.IncreaseIfTargetMet;
@@ -247,12 +253,12 @@ namespace AgentReferralSystem.Api.Data.Services
 
                         #endregion end target met
 
-                        var commissionSumMonth = agentCalc.Membership.CommissionSumMonth + agentCalc.ServiceMember.CommissionSumMonth + 
-                            agentCalc.ServiceNonMember.CommissionSumMonth + agentCalc.CompoundingMember.CommissionSumMonth + 
+                        var commissionSumMonth = agentCalc.Membership.CommissionSumMonth + agentCalc.ServiceMember.CommissionSumMonth +
+                            agentCalc.ServiceNonMember.CommissionSumMonth + agentCalc.CompoundingMember.CommissionSumMonth +
                             agentCalc.CompoundingNonMember.CommissionSumMonth;
 
-                        totalSalesYear += agentCalc.Membership.TargetSumMonth + agentCalc.ServiceMember.TargetSumMonth + 
-                            agentCalc.ServiceNonMember.TargetSumMonth + agentCalc.CompoundingMember.TargetSumMonth + 
+                        totalSalesYear += agentCalc.Membership.TargetSumMonth + agentCalc.ServiceMember.TargetSumMonth +
+                            agentCalc.ServiceNonMember.TargetSumMonth + agentCalc.CompoundingMember.TargetSumMonth +
                             agentCalc.CompoundingNonMember.TargetSumMonth;
 
                         totalCommissionYear += commissionSumMonth;
@@ -271,7 +277,7 @@ namespace AgentReferralSystem.Api.Data.Services
                             ServiceNonMemberSum = agentCalc.ServiceNonMember.TargetSumMonth,
                             ServiceNonMemberSumCommission = decimal.Round(agentCalc.ServiceNonMember.CommissionSumMonth, 2, MidpointRounding.AwayFromZero),
                             CompoundingMemberSum = agentCalc.CompoundingMember.TargetSumMonth,
-                            CompoundingMemberSumCommission = decimal.Round(agentCalc.CompoundingMember.CommissionSumMonth, 2,MidpointRounding.AwayFromZero),
+                            CompoundingMemberSumCommission = decimal.Round(agentCalc.CompoundingMember.CommissionSumMonth, 2, MidpointRounding.AwayFromZero),
                             CompoundingNonMemberSum = agentCalc.CompoundingNonMember.TargetSumMonth,
                             CompoundingNonMemberSumCommission = decimal.Round(agentCalc.CompoundingNonMember.CommissionSumMonth, 2, MidpointRounding.AwayFromZero),
                             CommissionSum = decimal.Round(commissionSumMonth, 2, MidpointRounding.AwayFromZero)
@@ -305,14 +311,14 @@ namespace AgentReferralSystem.Api.Data.Services
                         #region reset target period && reset to base
 
                         #region MemberShip
-                        if(agentCalc.Membership.TargetPeriodMonth >= agentCalc.Membership.TargetPeriod)
+                        if (agentCalc.Membership.TargetPeriodMonth >= agentCalc.Membership.TargetPeriod)
                         {
                             // set target period to default
                             agentCalc.Membership.TargetPeriodMonth = 0;
                             agentCalc.Membership.TargetSum = 0;
                         }
 
-                        if(agentCalc.Membership.ResetToBaseMonth >= agentCalc.Membership.ResetToBase)
+                        if (agentCalc.Membership.ResetToBaseMonth >= agentCalc.Membership.ResetToBase)
                         {
                             agentCalc.Membership.ResetToBase = 0;
                             agentCalc.Membership.BaseCommission = SaleTypesCalcBase.Membership.BaseCommission;
@@ -390,14 +396,14 @@ namespace AgentReferralSystem.Api.Data.Services
                         #endregion end reset target period && reset to base
 
                         // add month
-                        start = start.AddMonths(1);
+                        agentStartDate = agentStartDate.AddMonths(1);
 
                         totalSalesPerYear = new TotalSalesPerYearViewModel
                         {
-                            Year = year,
+                            Year = patientYear,
                             TotalSalesPerMonth = totalSalesPerMonths,
-                            TotalSales = decimal.Round(totalSalesYear, 2, MidpointRounding.AwayFromZero),
-                            TotalCommission = decimal.Round(totalCommissionYear, 2, MidpointRounding.AwayFromZero)
+                            TotalSalesYear = decimal.Round(totalSalesYear, 2, MidpointRounding.AwayFromZero),
+                            TotalCommissionYear = decimal.Round(totalCommissionYear, 2, MidpointRounding.AwayFromZero)
                         };
                     }
                 }
@@ -411,8 +417,8 @@ namespace AgentReferralSystem.Api.Data.Services
             {
                 AgentName = agent.AgentDesc,
                 TotalSalesPerYear = totalSalesPerYears,
-                TotalSales = decimal.Round(totalSalesAgent, 2, MidpointRounding.AwayFromZero),
-                TotalCommission = decimal.Round(totalCommissionAgent, 2, MidpointRounding.AwayFromZero)
+                AgentTotalSales = decimal.Round(totalSalesAgent, 2, MidpointRounding.AwayFromZero),
+                AgentTotalCommission = decimal.Round(totalCommissionAgent, 2, MidpointRounding.AwayFromZero)
             };
 
             return result;
@@ -515,5 +521,47 @@ namespace AgentReferralSystem.Api.Data.Services
             return agentCalc;
         }
 
+        private static decimal MembersCalculate(this int memberNum)
+        {
+            return memberNum * 3_000_000;
+        }
+
+        private static List<SaleDetailViewModel> SaleDetailsGroupByEpiNo(this List<SaleDetailViewModel> models)
+        {
+            var result = new List<SaleDetailViewModel>();
+
+            // distinct episode
+            var epiNoList = models.Select(d => d.Episode).Distinct().ToList();
+
+            // group data by episode no
+            foreach (var item in epiNoList)
+            {
+                var data = models.Where(e => e.Episode == item);
+
+                var hn = data.Select(p => p.HN).FirstOrDefault();
+                var epiDate = data.Select(p => p.Date).FirstOrDefault();
+                var serviceMember = data.Select(p => p.ServiceMember).Sum();
+                var serviceNonMember = data.Select(p => p.ServiceNonMember).Sum();
+                var compoundingMember = data.Select(p => p.CompoundingMember).Sum();
+                var compoundingNonMember = data.Select(p => p.CompoundingNonMember).Sum();
+                var totalAmount = serviceMember + serviceNonMember + compoundingMember + compoundingNonMember;
+
+                var model = new SaleDetailViewModel
+                {
+                    HN = hn,
+                    Episode = item,
+                    Date = epiDate,
+                    ServiceMember = serviceMember,
+                    ServiceNonMember = serviceNonMember,
+                    CompoundingMember = compoundingMember,
+                    CompoundingNonMember = compoundingNonMember,
+                    TotalAmount = totalAmount
+                };
+
+                result.Add(model);
+            }
+
+            return result;
+        }
     }
 }

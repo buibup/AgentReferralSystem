@@ -11,17 +11,17 @@ namespace AgentReferralSystem.Api.Data.ViewModels
         public string AgentName { get; set; }
         public List<TotalSalesPerYearViewModel> TotalSalesPerYear { get; set; }
         [ExcelTableColumn("TotalSales")]
-        public decimal TotalSales { get; set; }
+        public decimal AgentTotalSales { get; set; }
         [ExcelTableColumn("TotalCommission")]
-        public decimal TotalCommission { get; set; }
+        public decimal AgentTotalCommission { get; set; }
     }
 
     public class TotalSalesPerYearViewModel
     {
         public int Year { get; set; }
         public List<TotalSalesPerMonthViewModel> TotalSalesPerMonth { get; set; }
-        public decimal TotalSales { get; set; }
-        public decimal TotalCommission { get; set; }
+        public decimal TotalSalesYear { get; set; }
+        public decimal TotalCommissionYear { get; set; }
     }
 
     public class TotalSalesPerMonthViewModel
@@ -50,12 +50,10 @@ namespace AgentReferralSystem.Api.Data.ViewModels
         public string HN { get; set; }
         public string Episode { get; set; }
         public decimal TotalAmount { get; set; }
-        public decimal Membership { get; set; }
         public decimal ServiceMember { get; set; }
         public decimal ServiceNonMember { get; set; }
         public decimal CompoundingMember { get; set; }
         public decimal CompoundingNonMember { get; set; }
-        public decimal Commission { get; set; }
     }
 
 }
