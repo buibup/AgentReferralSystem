@@ -116,18 +116,10 @@ namespace AgentReferralSystem.Api.Data.Services
                         totalSalesMonth = agentCalc.SumTargetOfMonth();
 
                         // add target period month
-                        agentCalc.Membership.TargetPeriodMonth += 1;
-                        agentCalc.ServiceMember.TargetPeriodMonth += 1;
-                        agentCalc.ServiceNonMember.TargetPeriodMonth += 1;
-                        agentCalc.CompoundingMember.TargetPeriodMonth += 1;
-                        agentCalc.CompoundingNonMember.TargetPeriodMonth += 1;
+                        IncreaseTargetPeriodMonth(ref agentCalc);
 
                         // add reset to base month
-                        agentCalc.Membership.ResetToBaseMonth += 1;
-                        agentCalc.ServiceMember.ResetToBaseMonth += 1;
-                        agentCalc.ServiceNonMember.ResetToBaseMonth += 1;
-                        agentCalc.CompoundingMember.ResetToBaseMonth += 1;
-                        agentCalc.CompoundingNonMember.ResetToBaseMonth += 1;
+                        IncreaseResetToBaseMonth(ref agentCalc);
 
                         #region target met
 
@@ -160,7 +152,6 @@ namespace AgentReferralSystem.Api.Data.Services
                         }
                         // calc service member commission
                         agentCalc.ServiceMember.CommissionSumMonth = (agentCalc.ServiceMember.TargetSumMonth * agentCalc.ServiceMember.BaseCommission) / 100;
-
 
                         #endregion
 
@@ -485,7 +476,6 @@ namespace AgentReferralSystem.Api.Data.Services
             return agentCalc;
         }
 
-
         private static List<SaleDetailViewModel> SaleDetailsGroupByEpiNo(this List<SaleDetailViewModel> models)
         {
             var result = new List<SaleDetailViewModel>();
@@ -522,6 +512,24 @@ namespace AgentReferralSystem.Api.Data.Services
             }
 
             return result;
+        }
+
+        private static void IncreaseTargetPeriodMonth(ref AgentCalc agentCalc)
+        {
+            agentCalc.Membership.TargetPeriodMonth += 1;
+            agentCalc.ServiceMember.TargetPeriodMonth += 1;
+            agentCalc.ServiceNonMember.TargetPeriodMonth += 1;
+            agentCalc.CompoundingMember.TargetPeriodMonth += 1;
+            agentCalc.CompoundingNonMember.TargetPeriodMonth += 1;
+        }
+
+        private static void IncreaseResetToBaseMonth(ref AgentCalc agentCalc)
+        {
+            agentCalc.Membership.ResetToBaseMonth += 1;
+            agentCalc.ServiceMember.ResetToBaseMonth += 1;
+            agentCalc.ServiceNonMember.ResetToBaseMonth += 1;
+            agentCalc.CompoundingMember.ResetToBaseMonth += 1;
+            agentCalc.CompoundingNonMember.ResetToBaseMonth += 1;
         }
     }
 }
