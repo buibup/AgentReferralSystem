@@ -5,7 +5,11 @@ using System.Threading.Tasks;
 
 namespace AgentReferralSystem.Api.Data.Calculate
 {
-    public class MembershipCalc
+    public static class MembershipCalc
     {
+        public static decimal MembersCalculate(this int memberNum)
+        {
+            return memberNum * 3_000_000;
+        }
     }
 }

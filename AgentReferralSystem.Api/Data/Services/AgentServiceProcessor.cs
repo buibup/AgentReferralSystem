@@ -1,4 +1,5 @@
-﻿using AgentReferralSystem.Api.Data.Models;
+﻿using AgentReferralSystem.Api.Data.Calculate;
+using AgentReferralSystem.Api.Data.Models;
 using AgentReferralSystem.Api.Data.Models.Cache;
 using AgentReferralSystem.Api.Data.Models.Calc;
 using AgentReferralSystem.Api.Data.Models.SqlServer;
@@ -101,42 +102,8 @@ namespace AgentReferralSystem.Api.Data.Services
                                 TotalAmount = 0
                             };
 
-                            #region calc bwc service
-                            if (memberPapmiDrList.Any(m => item.PAADM_PAPMI_DR == m)) // member
-                            {
-                                if (itemCompoundingList.Any(i => i.ARCIM_RowId == item.ARCIM_RowId)) // compounding 
-                                {
-                                    agentCalc.CompoundingMember.TargetSumMonth += item.ITM_LineTotal;
-                                    agentCalc.CompoundingMember.TargetSum += item.ITM_LineTotal;
-                                    model.CompoundingMember = item.ITM_LineTotal;
-                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.CompoundingMember.BaseCommission), 100);
-                                }
-                                else  // services
-                                {
-                                    agentCalc.ServiceMember.TargetSumMonth += item.ITM_LineTotal;
-                                    agentCalc.ServiceMember.TargetSum += item.ITM_LineTotal;
-                                    model.ServiceMember = item.ITM_LineTotal;
-                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.ServiceMember.BaseCommission), 100);
-                                }
-                            }
-                            else // non member
-                            {
-                                if (itemCompoundingList.Any(i => i.ARCIM_RowId == item.ARCIM_RowId)) // compounding 
-                                {
-                                    agentCalc.CompoundingNonMember.TargetSumMonth += item.ITM_LineTotal;
-                                    agentCalc.CompoundingNonMember.TargetSum += item.ITM_LineTotal;
-                                    model.CompoundingNonMember = item.ITM_LineTotal;
-                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.CompoundingNonMember.BaseCommission), 100);
-                                }
-                                else  // services
-                                {
-                                    agentCalc.ServiceNonMember.TargetSumMonth += item.ITM_LineTotal;
-                                    agentCalc.ServiceNonMember.TargetSum += item.ITM_LineTotal;
-                                    model.ServiceNonMember = item.ITM_LineTotal;
-                                    //model.Commission = Decimal.Divide(Decimal.Multiply(item.ITM_LineTotal, agentCalc.ServiceNonMember.BaseCommission), 100);
-                                }
-                            }
-                            #endregion
+                            // calculate service
+                            item.SetSaleDetailViewModel(ref model,ref agentCalc, memberPapmiDrList, itemCompoundingList.ToList());
 
                             saleDetailList.Add(model);
                         }
@@ -521,10 +488,6 @@ namespace AgentReferralSystem.Api.Data.Services
             return agentCalc;
         }
 
-        private static decimal MembersCalculate(this int memberNum)
-        {
-            return memberNum * 3_000_000;
-        }
 
         private static List<SaleDetailViewModel> SaleDetailsGroupByEpiNo(this List<SaleDetailViewModel> models)
         {
