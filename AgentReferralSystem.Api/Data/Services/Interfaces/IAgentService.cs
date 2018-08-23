@@ -12,7 +12,7 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
     public interface IAgentService
     {
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
-        Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync();
+        Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync(string search);
         Task<AgentOutput> GetAgentByIdAsync(int agentId);
         Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);

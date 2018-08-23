@@ -31,9 +31,10 @@ namespace AgentReferralSystem.Api.Controllers
         }
 
         [HttpGet("GetPACReferralTypes")]
-        public async Task<IActionResult> GetPACReferralTypesAsync()
+        [HttpGet("GetPACReferralTypes/{search}")]
+        public async Task<IActionResult> GetPACReferralTypesAsync(string search = "")
         {
-            var result = await _agentService.GetPACReferralTypesAsync();
+            var result = await _agentService.GetPACReferralTypesAsync(search);
 
             if (result == null) return NotFound();
 

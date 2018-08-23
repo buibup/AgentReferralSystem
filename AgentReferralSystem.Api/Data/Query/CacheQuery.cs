@@ -7,12 +7,29 @@ namespace AgentReferralSystem.Api.Data.Query
 {
     public static class CacheQuery
     {
-        public static string GetPACReferralTypeAll()
+        public static string GetPACReferralTypeAll(string search)
         {
-            return @"
+            string query = string.Empty;
+
+            if (string.IsNullOrEmpty(search))
+            {
+                query = @"
                 SELECT REFT_RowId, REFT_Code, REFT_Desc
                 FROM PAC_ReferralType
-                WHERE REFT_DateTo >= CURRENT_DATE OR REFT_DateTo IS NULL";
+                WHERE REFT_DateTo >= CURRENT_DATE OR REFT_DateTo IS NULL
+                ORDER BY REFT_Desc ASC";
+            }
+            else
+            {
+                query = $@"SELECT REFT_RowId, REFT_Code, REFT_Desc
+                FROM PAC_ReferralType
+                WHERE REFT_DateTo >= CURRENT_DATE OR REFT_DateTo IS NULL
+                AND REFT_Desc LIKE '%{search}%'
+                ORDER BY REFT_Desc ASC";
+            }
+
+
+            return query;
         }
 
         public static string GetARPatientsBillsByReferralTypeRowId()

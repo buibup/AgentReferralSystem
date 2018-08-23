@@ -8,7 +8,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess.Interfaces
 {
     public interface ICacheDataAccess
     {
-        Task<IEnumerable<PACReferralType>> GetPACReferralTypeAllAsync();
+        Task<IEnumerable<PACReferralType>> GetPACReferralTypeAllAsync(string search);
         Task<IEnumerable<ARPatientBill>> GetARPatientsBillsByReferralTypeRowIdAsync(int rowId);
         Task<IEnumerable<ARCItmMast>> GetARCItmMastCompoundingAsync();
         Task<QBWCMEMBERS> GetQBWCMEMBERSByPapmiRowIdAsync(int papmiRowId);
