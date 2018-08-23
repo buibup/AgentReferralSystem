@@ -67,13 +67,8 @@ namespace AgentReferralSystem.Api.Data.Services
                         // count all patient bwc services on current month
                         var papmiDRList = patientBillListOnCurrent.Select(p => p.PAADM_PAPMI_DR).Distinct().ToList();
 
+                        // distinct member regist
                         var memberPapmiDrList = memberRegisList.Select(m => m.QUESPAPatMasDR).Distinct().ToList();
-
-                        // patient member
-                        var patientBillMemberList = patientBillListOnCurrent.Where(p => memberPapmiDrList.Any(p2 => p2 == p.PAADM_PAPMI_DR)).ToList();
-
-                        // patient non member
-                        var patientBillNonmemberList = patientBillListOnCurrent.Where(p => !memberPapmiDrList.Any(p2 => p2 == p.PAADM_PAPMI_DR)).ToList();
 
                         var saleDetail = new SaleDetailViewModel();
 
@@ -102,7 +97,7 @@ namespace AgentReferralSystem.Api.Data.Services
                             };
 
                             // calculate service
-                            item.SetSaleDetailViewModel(ref model,ref agentCalc, memberPapmiDrList, itemCompoundingList.ToList());
+                            item.SetSaleDetailViewModel(ref model, ref agentCalc, memberPapmiDrList, itemCompoundingList.ToList());
 
                             saleDetailList.Add(model);
                         }
@@ -110,6 +105,7 @@ namespace AgentReferralSystem.Api.Data.Services
 
                         if (saleDetailList.Count > 0)
                         {
+                            // group saleDetailList by episode no
                             saleDetailList = saleDetailList.SaleDetailsGroupByEpiNo();
                         }
 
@@ -123,18 +119,17 @@ namespace AgentReferralSystem.Api.Data.Services
 
                         // target met calc
                         CommonCalc.TargetMet(ref agentCalc);
-                        
 
-                        var commissionSumMonth = agentCalc.Membership.CommissionSumMonth + agentCalc.ServiceMember.CommissionSumMonth +
-                            agentCalc.ServiceNonMember.CommissionSumMonth + agentCalc.CompoundingMember.CommissionSumMonth +
-                            agentCalc.CompoundingNonMember.CommissionSumMonth;
+                        // sum commission of month
+                        var commissionSumMonth = agentCalc.SumCommissionOfMonth();
 
-                        totalSalesYear += agentCalc.Membership.TargetSumMonth + agentCalc.ServiceMember.TargetSumMonth +
-                            agentCalc.ServiceNonMember.TargetSumMonth + agentCalc.CompoundingMember.TargetSumMonth +
-                            agentCalc.CompoundingNonMember.TargetSumMonth;
+                        // sum total sales of year
+                        totalSalesYear += agentCalc.SumTargetOfMonth();
 
+                        // sum total commission of year
                         totalCommissionYear += commissionSumMonth;
 
+                        // set values to TotalSalesPerMonthViewModel model
                         var totalSalesPerMonth = new TotalSalesPerMonthViewModel
                         {
                             Month = (Month)currentMonth,
@@ -155,121 +150,19 @@ namespace AgentReferralSystem.Api.Data.Services
                             CommissionSum = decimal.Round(commissionSumMonth, 2, MidpointRounding.AwayFromZero)
                         };
 
-                        #region reset month value
-
-                        //totalSalesMonth = 0;
-
-                        agentCalc.Membership.TargetSumMonth = 0;
-                        agentCalc.Membership.CommissionSumMonth = 0;
-
-                        agentCalc.ServiceMember.TargetSumMonth = 0;
-                        agentCalc.ServiceMember.CommissionSumMonth = 0;
-
-                        agentCalc.ServiceNonMember.TargetSumMonth = 0;
-                        agentCalc.ServiceNonMember.CommissionSumMonth = 0;
-
-                        agentCalc.CompoundingMember.TargetSumMonth = 0;
-                        agentCalc.CompoundingMember.CommissionSumMonth = 0;
-
-                        agentCalc.CompoundingNonMember.TargetSumMonth = 0;
-                        agentCalc.CompoundingNonMember.CommissionSumMonth = 0;
-
-                        #endregion
-
+                        // reset month value
+                        ResetAgentMonthValues(ref agentCalc);
 
                         // add totalSalesPerMonth to list
                         totalSalesPerMonths.Add(totalSalesPerMonth);
 
-                        #region reset target period && reset to base
-
-                        #region MemberShip
-                        if (agentCalc.Membership.TargetPeriodMonth >= agentCalc.Membership.TargetPeriod)
-                        {
-                            // set target period to default
-                            agentCalc.Membership.TargetPeriodMonth = 0;
-                            agentCalc.Membership.TargetSum = 0;
-                        }
-
-                        if (agentCalc.Membership.ResetToBaseMonth >= agentCalc.Membership.ResetToBase)
-                        {
-                            agentCalc.Membership.ResetToBase = 0;
-                            agentCalc.Membership.BaseCommission = SaleTypesCalcBase.Membership.BaseCommission;
-                        }
-                        #endregion
-
-                        #region ServiceMember
-                        if (agentCalc.ServiceMember.TargetPeriodMonth >= agentCalc.ServiceMember.TargetPeriod)
-                        {
-                            // set target period to default
-                            agentCalc.ServiceMember.TargetPeriodMonth = 0;
-                            agentCalc.ServiceMember.TargetSum = 0;
-                        }
-
-                        if (agentCalc.ServiceMember.ResetToBaseMonth >= agentCalc.ServiceMember.ResetToBase)
-                        {
-                            // set reset to base to default
-                            agentCalc.ServiceMember.ResetToBaseMonth = 0;
-                            // set percent commission to base
-                            agentCalc.ServiceMember.BaseCommission = SaleTypesCalcBase.ServiceMember.BaseCommission;
-                        }
-                        #endregion
-
-                        #region ServiceNonMember
-                        if (agentCalc.ServiceNonMember.TargetPeriodMonth >= agentCalc.ServiceNonMember.TargetPeriod)
-                        {
-                            // set target period to default
-                            agentCalc.ServiceNonMember.TargetPeriodMonth = 0;
-                            agentCalc.ServiceNonMember.TargetSum = 0;
-                        }
-
-                        if (agentCalc.ServiceNonMember.ResetToBaseMonth >= agentCalc.ServiceNonMember.ResetToBase)
-                        {
-                            // set reset to base to default
-                            agentCalc.ServiceNonMember.ResetToBaseMonth = 0;
-                            // set percent commission to base
-                            agentCalc.ServiceNonMember.BaseCommission = SaleTypesCalcBase.ServiceNonMember.BaseCommission;
-                        }
-                        #endregion
-
-                        #region CompoundingMember
-                        if (agentCalc.CompoundingMember.TargetPeriodMonth >= agentCalc.CompoundingMember.TargetPeriod)
-                        {
-                            // set target period to default
-                            agentCalc.CompoundingMember.TargetPeriodMonth = 0;
-                            agentCalc.CompoundingMember.TargetSum = 0;
-                        }
-
-                        if (agentCalc.CompoundingMember.ResetToBaseMonth >= agentCalc.CompoundingMember.ResetToBase)
-                        {
-                            // set reset to base to default
-                            agentCalc.CompoundingMember.ResetToBaseMonth = 0;
-                            // set percent commission to base
-                            agentCalc.CompoundingMember.BaseCommission = SaleTypesCalcBase.CompoundingMember.BaseCommission;
-                        }
-                        #endregion
-
-                        #region CompoundingNonMember
-                        if (agentCalc.CompoundingNonMember.TargetPeriodMonth >= agentCalc.CompoundingNonMember.TargetPeriod)
-                        {
-                            // set target period to default
-                            agentCalc.CompoundingNonMember.TargetPeriodMonth = 0;
-                            agentCalc.CompoundingNonMember.TargetSum = 0;
-                        }
-
-                        if (agentCalc.CompoundingNonMember.ResetToBaseMonth >= agentCalc.CompoundingNonMember.ResetToBase)
-                        {
-                            // set reset to base to default
-                            agentCalc.CompoundingNonMember.ResetToBaseMonth = 0;
-                            // set percent commission to base
-                            agentCalc.CompoundingNonMember.BaseCommission = SaleTypesCalcBase.CompoundingNonMember.BaseCommission;
-                        }
-                        #endregion
-
-                        #endregion end reset target period && reset to base
+                        // reset target period && reset to base
+                        ResetAgentTargetPeriodAndResetToBase(ref agentCalc);
 
                         // add month
                         agentStartDate = agentStartDate.AddMonths(1);
 
+                        // set values to TotalSalesPerYearViewModel 
                         totalSalesPerYear = new TotalSalesPerYearViewModel
                         {
                             Year = patientYear,
@@ -279,12 +172,13 @@ namespace AgentReferralSystem.Api.Data.Services
                         };
                     }
                 }
-
+                
                 totalSalesAgent += decimal.Round(totalSalesYear, 2, MidpointRounding.AwayFromZero);
                 totalCommissionAgent += decimal.Round(totalCommissionYear, 2, MidpointRounding.AwayFromZero);
                 totalSalesPerYears.Add(totalSalesPerYear);
             }
 
+            // add values to result
             var result = new AgentViewModel
             {
                 AgentName = agent.AgentDesc,
@@ -447,6 +341,110 @@ namespace AgentReferralSystem.Api.Data.Services
             agentCalc.ServiceNonMember.ResetToBaseMonth += 1;
             agentCalc.CompoundingMember.ResetToBaseMonth += 1;
             agentCalc.CompoundingNonMember.ResetToBaseMonth += 1;
+        }
+
+        private static void ResetAgentMonthValues(ref AgentCalc agentCalc)
+        {
+            agentCalc.Membership.TargetSumMonth = 0;
+            agentCalc.Membership.CommissionSumMonth = 0;
+
+            agentCalc.ServiceMember.TargetSumMonth = 0;
+            agentCalc.ServiceMember.CommissionSumMonth = 0;
+
+            agentCalc.ServiceNonMember.TargetSumMonth = 0;
+            agentCalc.ServiceNonMember.CommissionSumMonth = 0;
+
+            agentCalc.CompoundingMember.TargetSumMonth = 0;
+            agentCalc.CompoundingMember.CommissionSumMonth = 0;
+
+            agentCalc.CompoundingNonMember.TargetSumMonth = 0;
+            agentCalc.CompoundingNonMember.CommissionSumMonth = 0;
+        }
+
+        private static void ResetAgentTargetPeriodAndResetToBase(ref AgentCalc agentCalc)
+        {
+            #region MemberShip
+            if (agentCalc.Membership.TargetPeriodMonth >= agentCalc.Membership.TargetPeriod)
+            {
+                // set target period to default
+                agentCalc.Membership.TargetPeriodMonth = 0;
+                agentCalc.Membership.TargetSum = 0;
+            }
+
+            if (agentCalc.Membership.ResetToBaseMonth >= agentCalc.Membership.ResetToBase)
+            {
+                agentCalc.Membership.ResetToBase = 0;
+                agentCalc.Membership.BaseCommission = SaleTypesCalcBase.Membership.BaseCommission;
+            }
+            #endregion
+
+            #region ServiceMember
+            if (agentCalc.ServiceMember.TargetPeriodMonth >= agentCalc.ServiceMember.TargetPeriod)
+            {
+                // set target period to default
+                agentCalc.ServiceMember.TargetPeriodMonth = 0;
+                agentCalc.ServiceMember.TargetSum = 0;
+            }
+
+            if (agentCalc.ServiceMember.ResetToBaseMonth >= agentCalc.ServiceMember.ResetToBase)
+            {
+                // set reset to base to default
+                agentCalc.ServiceMember.ResetToBaseMonth = 0;
+                // set percent commission to base
+                agentCalc.ServiceMember.BaseCommission = SaleTypesCalcBase.ServiceMember.BaseCommission;
+            }
+            #endregion
+
+            #region ServiceNonMember
+            if (agentCalc.ServiceNonMember.TargetPeriodMonth >= agentCalc.ServiceNonMember.TargetPeriod)
+            {
+                // set target period to default
+                agentCalc.ServiceNonMember.TargetPeriodMonth = 0;
+                agentCalc.ServiceNonMember.TargetSum = 0;
+            }
+
+            if (agentCalc.ServiceNonMember.ResetToBaseMonth >= agentCalc.ServiceNonMember.ResetToBase)
+            {
+                // set reset to base to default
+                agentCalc.ServiceNonMember.ResetToBaseMonth = 0;
+                // set percent commission to base
+                agentCalc.ServiceNonMember.BaseCommission = SaleTypesCalcBase.ServiceNonMember.BaseCommission;
+            }
+            #endregion
+
+            #region CompoundingMember
+            if (agentCalc.CompoundingMember.TargetPeriodMonth >= agentCalc.CompoundingMember.TargetPeriod)
+            {
+                // set target period to default
+                agentCalc.CompoundingMember.TargetPeriodMonth = 0;
+                agentCalc.CompoundingMember.TargetSum = 0;
+            }
+
+            if (agentCalc.CompoundingMember.ResetToBaseMonth >= agentCalc.CompoundingMember.ResetToBase)
+            {
+                // set reset to base to default
+                agentCalc.CompoundingMember.ResetToBaseMonth = 0;
+                // set percent commission to base
+                agentCalc.CompoundingMember.BaseCommission = SaleTypesCalcBase.CompoundingMember.BaseCommission;
+            }
+            #endregion
+
+            #region CompoundingNonMember
+            if (agentCalc.CompoundingNonMember.TargetPeriodMonth >= agentCalc.CompoundingNonMember.TargetPeriod)
+            {
+                // set target period to default
+                agentCalc.CompoundingNonMember.TargetPeriodMonth = 0;
+                agentCalc.CompoundingNonMember.TargetSum = 0;
+            }
+
+            if (agentCalc.CompoundingNonMember.ResetToBaseMonth >= agentCalc.CompoundingNonMember.ResetToBase)
+            {
+                // set reset to base to default
+                agentCalc.CompoundingNonMember.ResetToBaseMonth = 0;
+                // set percent commission to base
+                agentCalc.CompoundingNonMember.BaseCommission = SaleTypesCalcBase.CompoundingNonMember.BaseCommission;
+            }
+            #endregion
         }
     }
 }

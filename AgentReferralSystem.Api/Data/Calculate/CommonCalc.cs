@@ -15,6 +15,13 @@ namespace AgentReferralSystem.Api.Data.Calculate
                             agentCalc.CompoundingNonMember.TargetSumMonth;
         }
 
+        public static decimal SumCommissionOfMonth(this AgentCalc agentCalc)
+        {
+            return agentCalc.Membership.CommissionSumMonth + agentCalc.ServiceMember.CommissionSumMonth +
+                            agentCalc.ServiceNonMember.CommissionSumMonth + agentCalc.CompoundingMember.CommissionSumMonth +
+                            agentCalc.CompoundingNonMember.CommissionSumMonth;
+        } 
+
         public static void TargetMet(ref AgentCalc agentCalc)
         {
             #region membership
