@@ -121,92 +121,9 @@ namespace AgentReferralSystem.Api.Data.Services
                         // add reset to base month
                         IncreaseResetToBaseMonth(ref agentCalc);
 
-                        #region target met
-
-                        #region membership
-                        // is membership target met
-                        if (agentCalc.Membership.TargetSum >= agentCalc.Membership.Target &&
-                            agentCalc.Membership.TargetPeriodMonth <= agentCalc.Membership.TargetPeriod)
-                        {
-                            // check maximum
-                            if (agentCalc.Membership.BaseCommission < agentCalc.Membership.Maximum)
-                            {
-                                // add base commission
-                                agentCalc.Membership.BaseCommission += agentCalc.Membership.IncreaseIfTargetMet;
-                            }
-                        }
-                        // calc membership commission
-                        agentCalc.Membership.CommissionSumMonth = decimal.Round(agentCalc.Membership.TargetSumMonth * agentCalc.Membership.BaseCommission) / 100;
-                        #endregion
-
-                        #region service member
-                        // is service member target met 
-                        if (agentCalc.ServiceMember.TargetSum >= agentCalc.ServiceMember.Target)
-                        {
-                            // check maximum
-                            if (agentCalc.ServiceMember.BaseCommission < agentCalc.ServiceMember.Maximum)
-                            {
-                                // add base commission
-                                agentCalc.ServiceMember.BaseCommission += agentCalc.ServiceMember.IncreaseIfTargetMet;
-                            }
-                        }
-                        // calc service member commission
-                        agentCalc.ServiceMember.CommissionSumMonth = (agentCalc.ServiceMember.TargetSumMonth * agentCalc.ServiceMember.BaseCommission) / 100;
-
-                        #endregion
-
-                        #region service non member
-                        // is service non member target met 
-                        if (agentCalc.ServiceNonMember.TargetSum >= agentCalc.ServiceNonMember.Target)
-                        {
-                            // check maximum
-                            if (agentCalc.ServiceNonMember.BaseCommission < agentCalc.ServiceNonMember.Maximum)
-                            {
-                                // add base commission
-                                agentCalc.ServiceNonMember.BaseCommission += agentCalc.ServiceNonMember.IncreaseIfTargetMet;
-                            }
-                        }
-
-                        // calc service non member commission
-                        agentCalc.ServiceNonMember.CommissionSumMonth = (agentCalc.ServiceNonMember.TargetSumMonth * agentCalc.ServiceNonMember.BaseCommission) / 100;
-
-                        #endregion
-
-                        #region compounding member
-                        // is compounding member target met 
-                        if (agentCalc.CompoundingMember.TargetSum >= agentCalc.CompoundingMember.Target)
-                        {
-                            // check maximum
-                            if (agentCalc.CompoundingMember.BaseCommission < agentCalc.CompoundingMember.Maximum)
-                            {
-                                // add base commission
-                                agentCalc.CompoundingMember.BaseCommission += agentCalc.CompoundingMember.IncreaseIfTargetMet;
-                            }
-                        }
-
-                        // calc compounding member commission
-                        agentCalc.CompoundingMember.CommissionSumMonth = (agentCalc.CompoundingMember.TargetSumMonth * agentCalc.CompoundingMember.BaseCommission) / 100;
-
-                        #endregion
-
-                        #region compounding non member
-                        // is compounding non member target met  
-                        if (agentCalc.CompoundingNonMember.TargetSum >= agentCalc.CompoundingNonMember.Target)
-                        {
-                            // check maximum
-                            if (agentCalc.CompoundingNonMember.BaseCommission < agentCalc.CompoundingNonMember.Maximum)
-                            {
-                                // add base commission
-                                agentCalc.CompoundingNonMember.BaseCommission += agentCalc.CompoundingNonMember.IncreaseIfTargetMet;
-                            }
-                        }
-
-                        // calc compounding non member commission
-                        agentCalc.CompoundingNonMember.CommissionSumMonth = (agentCalc.CompoundingNonMember.TargetSumMonth * agentCalc.CompoundingNonMember.BaseCommission) / 100;
-
-                        #endregion
-
-                        #endregion end target met
+                        // target met calc
+                        CommonCalc.TargetMet(ref agentCalc);
+                        
 
                         var commissionSumMonth = agentCalc.Membership.CommissionSumMonth + agentCalc.ServiceMember.CommissionSumMonth +
                             agentCalc.ServiceNonMember.CommissionSumMonth + agentCalc.CompoundingMember.CommissionSumMonth +
