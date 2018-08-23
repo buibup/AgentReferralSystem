@@ -86,8 +86,7 @@ namespace AgentReferralSystem.Api.Data.Services
                         }
                         #endregion
 
-                        #region Gun's Code
-                        // Add Member(Extend Code)
+                        #region calculate service and add sale detail to list
                         foreach (var item in patientBillListOnCurrent)
                         {
                             var model = new SaleDetailViewModel
@@ -114,9 +113,7 @@ namespace AgentReferralSystem.Api.Data.Services
                             saleDetailList = saleDetailList.SaleDetailsGroupByEpiNo();
                         }
 
-                        totalSalesMonth = agentCalc.Membership.TargetSumMonth + agentCalc.ServiceMember.TargetSumMonth +
-                            agentCalc.ServiceNonMember.TargetSumMonth + agentCalc.CompoundingMember.TargetSumMonth +
-                            agentCalc.CompoundingNonMember.TargetSumMonth;
+                        totalSalesMonth = agentCalc.SumTargetOfMonth();
 
                         // add target period month
                         agentCalc.Membership.TargetPeriodMonth += 1;
