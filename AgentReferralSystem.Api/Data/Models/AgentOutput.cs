@@ -16,5 +16,6 @@ namespace AgentReferralSystem.Api.Data.Models
         public string Remark { get; set; }
 
         public ICollection<SaleTypesOutput> AgentSaleTypes { get; set; }
+        public int RetroCutoffMonth { get; set; }
     }
 }

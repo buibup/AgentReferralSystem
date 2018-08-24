@@ -22,5 +22,6 @@ namespace AgentReferralSystem.Api.Data.Models.Calc
         public int ResetToBase { get; set; }
         public decimal IncreaseIfTargetMet { get; set; }
         public decimal Maximum { get; set; }
+        public string ApplicableTargetInrease { get; set; }
     }
 }

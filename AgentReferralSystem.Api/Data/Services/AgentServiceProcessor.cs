@@ -35,6 +35,7 @@ namespace AgentReferralSystem.Api.Data.Services
 
             // set agent base
             var agentBase = agent;
+            agentBase.RetroCutoffMonth = agentBase.StartDate.Month;
             var agentsSaleTypes = agentBase.AgentSaleTypes;
             #endregion
 
@@ -194,23 +195,23 @@ namespace AgentReferralSystem.Api.Data.Services
         {
             var membershipObject = agentSaleTypes
                .Where(d => d.SaleTypeId == (int)SaleTypeEnum.Membership)
-               .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum }).FirstOrDefault();
+               .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum, ApplicableTargetInrease = d.ApplicableTargetInrease }).FirstOrDefault();
 
             var serviceMemberObject = agentSaleTypes
                 .Where(d => d.SaleTypeId == (int)SaleTypeEnum.ServiceMember)
-                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum }).FirstOrDefault();
+                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum, ApplicableTargetInrease = d.ApplicableTargetInrease }).FirstOrDefault();
 
             var serviceNonMemberObject = agentSaleTypes
                 .Where(d => d.SaleTypeId == (int)SaleTypeEnum.ServiceNonMember)
-                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum }).FirstOrDefault();
+                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum, ApplicableTargetInrease = d.ApplicableTargetInrease }).FirstOrDefault();
 
             var compoundingMemberObject = agentSaleTypes
                 .Where(d => d.SaleTypeId == (int)SaleTypeEnum.CompoundingMember)
-                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum }).FirstOrDefault();
+                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum, ApplicableTargetInrease = d.ApplicableTargetInrease }).FirstOrDefault();
 
             var compoundingNonMemberObject = agentSaleTypes
                 .Where(d => d.SaleTypeId == (int)SaleTypeEnum.CompoundingNonMember)
-                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum }).FirstOrDefault();
+                .Select(d => new TypesCalc { BaseCommission = d.BaseCommission, Target = d.Target, TargetPeriod = d.TargetPeriod, ResetToBase = d.ResetToBase, IncreaseIfTargetMet = d.IncreaseIfTargetMet, Maximum = d.Maximum, ApplicableTargetInrease = d.ApplicableTargetInrease }).FirstOrDefault();
 
             // set base calc 
             SaleTypesCalcBase.Membership = membershipObject;
@@ -232,7 +233,8 @@ namespace AgentReferralSystem.Api.Data.Services
                     IncreaseIfTargetMet = membershipObject.IncreaseIfTargetMet,
                     Maximum = membershipObject.Maximum,
                     ResetToBase = membershipObject.ResetToBase,
-                    ResetToBaseMonth = 0
+                    ResetToBaseMonth = 0,
+                    ApplicableTargetIncrease = membershipObject.ApplicableTargetInrease,
                 },
                 ServiceMember = new Calc
                 {
@@ -244,7 +246,8 @@ namespace AgentReferralSystem.Api.Data.Services
                     IncreaseIfTargetMet = serviceMemberObject.IncreaseIfTargetMet,
                     Maximum = serviceMemberObject.Maximum,
                     ResetToBase = serviceMemberObject.ResetToBase,
-                    ResetToBaseMonth = 0
+                    ResetToBaseMonth = 0,
+                    ApplicableTargetIncrease = serviceMemberObject.ApplicableTargetInrease,
                 },
                 ServiceNonMember = new Calc
                 {
@@ -256,7 +259,8 @@ namespace AgentReferralSystem.Api.Data.Services
                     IncreaseIfTargetMet = serviceNonMemberObject.IncreaseIfTargetMet,
                     Maximum = serviceNonMemberObject.Maximum,
                     ResetToBase = serviceNonMemberObject.ResetToBase,
-                    ResetToBaseMonth = 0
+                    ResetToBaseMonth = 0,
+                    ApplicableTargetIncrease = serviceNonMemberObject.ApplicableTargetInrease,
                 },
                 CompoundingMember = new Calc
                 {
@@ -268,7 +272,8 @@ namespace AgentReferralSystem.Api.Data.Services
                     IncreaseIfTargetMet = compoundingMemberObject.IncreaseIfTargetMet,
                     Maximum = compoundingMemberObject.Maximum,
                     ResetToBase = compoundingMemberObject.ResetToBase,
-                    ResetToBaseMonth = 0
+                    ResetToBaseMonth = 0,
+                    ApplicableTargetIncrease = compoundingMemberObject.ApplicableTargetInrease,
                 },
                 CompoundingNonMember = new Calc
                 {
@@ -280,7 +285,8 @@ namespace AgentReferralSystem.Api.Data.Services
                     IncreaseIfTargetMet = compoundingNonMemberObject.IncreaseIfTargetMet,
                     Maximum = compoundingNonMemberObject.Maximum,
                     ResetToBase = compoundingNonMemberObject.ResetToBase,
-                    ResetToBaseMonth = 0
+                    ResetToBaseMonth = 0,
+                    ApplicableTargetIncrease = compoundingNonMemberObject.ApplicableTargetInrease,
                 }
             };
 

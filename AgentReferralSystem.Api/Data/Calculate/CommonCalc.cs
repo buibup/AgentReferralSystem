@@ -38,6 +38,16 @@ namespace AgentReferralSystem.Api.Data.Calculate
             }
             // calc membership commission
             agentCalc.Membership.CommissionSumMonth = decimal.Round(agentCalc.Membership.TargetSumMonth * agentCalc.Membership.BaseCommission) / 100;
+
+            #region checkRetroactive
+            if (agentCalc.Membership.ApplicableTargetIncrease.ToLower() == "retroactive")
+            {
+                //agentCalc.Membership.TargetSum = 0;
+                //agentCalc.Membership.BaseCommission = membershipObject.BaseCommission;
+                //นำส่วนต่างเดือนที่ผ่านมา add เข้าไปในค่า commission (เอาเปอร์เซ็นที่เพิ่มมาคูณยอดขายเดือนที่ผ่านมา) โดยตัดตั้งแต่ CutoffMonth มาล่าสุด
+            }
+            #endregion
+
             #endregion
 
             #region service member
@@ -54,6 +64,15 @@ namespace AgentReferralSystem.Api.Data.Calculate
             // calc service member commission
             agentCalc.ServiceMember.CommissionSumMonth = (agentCalc.ServiceMember.TargetSumMonth * agentCalc.ServiceMember.BaseCommission) / 100;
 
+            #region checkRetroactive
+            if (agentCalc.ServiceMember.ApplicableTargetIncrease.ToLower() == "retroactive")
+            {
+                //agentCalc.Membership.TargetSum = 0;
+                //agentCalc.Membership.BaseCommission = membershipObject.BaseCommission;
+                //นำส่วนต่างเดือนที่ผ่านมา add เข้าไปในค่า commission (เอาเปอร์เซ็นที่เพิ่มมาคูณยอดขายเดือนที่ผ่านมา) โดยตัดตั้งแต่ CutoffMonth มาล่าสุด
+            }
+            #endregion
+
             #endregion
 
             #region service non member
@@ -67,6 +86,15 @@ namespace AgentReferralSystem.Api.Data.Calculate
                     agentCalc.ServiceNonMember.BaseCommission += agentCalc.ServiceNonMember.IncreaseIfTargetMet;
                 }
             }
+
+            #region checkRetroactive
+            if (agentCalc.ServiceNonMember.ApplicableTargetIncrease.ToLower() == "retroactive")
+            {
+                //agentCalc.Membership.TargetSum = 0;
+                //agentCalc.Membership.BaseCommission = membershipObject.BaseCommission;
+                //นำส่วนต่างเดือนที่ผ่านมา add เข้าไปในค่า commission (เอาเปอร์เซ็นที่เพิ่มมาคูณยอดขายเดือนที่ผ่านมา) โดยตัดตั้งแต่ CutoffMonth มาล่าสุด
+            }
+            #endregion
 
             // calc service non member commission
             agentCalc.ServiceNonMember.CommissionSumMonth = (agentCalc.ServiceNonMember.TargetSumMonth * agentCalc.ServiceNonMember.BaseCommission) / 100;
@@ -88,6 +116,15 @@ namespace AgentReferralSystem.Api.Data.Calculate
             // calc compounding member commission
             agentCalc.CompoundingMember.CommissionSumMonth = (agentCalc.CompoundingMember.TargetSumMonth * agentCalc.CompoundingMember.BaseCommission) / 100;
 
+             #region checkRetroactive
+            if (agentCalc.CompoundingMember.ApplicableTargetIncrease.ToLower() == "retroactive")
+            {
+                //agentCalc.Membership.TargetSum = 0;
+                //agentCalc.Membership.BaseCommission = membershipObject.BaseCommission;
+                //นำส่วนต่างเดือนที่ผ่านมา add เข้าไปในค่า commission (เอาเปอร์เซ็นที่เพิ่มมาคูณยอดขายเดือนที่ผ่านมา) โดยตัดตั้งแต่ CutoffMonth มาล่าสุด
+            }
+            #endregion
+
             #endregion
 
             #region compounding non member
@@ -101,6 +138,15 @@ namespace AgentReferralSystem.Api.Data.Calculate
                     agentCalc.CompoundingNonMember.BaseCommission += agentCalc.CompoundingNonMember.IncreaseIfTargetMet;
                 }
             }
+
+            #region checkRetroactive
+            if (agentCalc.CompoundingNonMember.ApplicableTargetIncrease.ToLower() == "retroactive")
+            {
+                //agentCalc.Membership.TargetSum = 0;
+                //agentCalc.Membership.BaseCommission = membershipObject.BaseCommission;
+                //นำส่วนต่างเดือนที่ผ่านมา add เข้าไปในค่า commission (เอาเปอร์เซ็นที่เพิ่มมาคูณยอดขายเดือนที่ผ่านมา) โดยตัดตั้งแต่ CutoffMonth มาล่าสุด
+            }
+            #endregion
 
             // calc compounding non member commission
             agentCalc.CompoundingNonMember.CommissionSumMonth = (agentCalc.CompoundingNonMember.TargetSumMonth * agentCalc.CompoundingNonMember.BaseCommission) / 100;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AgentReferralSystem.Api.Data.ViewModels;
+
 
 namespace AgentReferralSystem.Api.Data.Models.SqlServer
 {
@@ -16,5 +18,6 @@ namespace AgentReferralSystem.Api.Data.Models.SqlServer
         public string Remark { get; set; }
 
         public List<AgentsSaleTypes> AgentSaleTypes { get; set; }
+        public List<AgentViewModel> AgentViewModel { get; set; }
     }
 }

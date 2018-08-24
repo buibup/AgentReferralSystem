@@ -11,9 +11,11 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
 {
     public interface IAgentService
     {
+        Task<IEnumerable<Agent>> GetAgentList();
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
         Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync(string search);
         Task<AgentOutput> GetAgentByIdAsync(int agentId);
+        Task<IEnumerable<SaleType>> GetSaleTypes();
         Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);
         Task SaveExportAgentAsync(AgentViewModel model);

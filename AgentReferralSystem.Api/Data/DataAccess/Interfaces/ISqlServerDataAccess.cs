@@ -9,7 +9,9 @@ namespace AgentReferralSystem.Api.Data.DataAccess.Interfaces
 {
     public interface ISqlServerDataAccess
     {
+        Task<IEnumerable<Agent>> GetAgentList();
         Task<AgentOutput> GetAgentByIdAsync(int agentId);
+        Task<IEnumerable<SaleType>> GetSaleTypes();
         Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);
     }

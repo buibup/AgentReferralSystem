@@ -19,6 +19,15 @@ namespace AgentReferralSystem.Api.Controllers
             _agentService = agentService;
         }
 
+        [HttpGet("GetAgentList")]
+        public async Task<IActionResult> GetAgentList()
+        {
+            var result = await _agentService.GetAgentList();
+
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
 
         [HttpGet("GetAgentReportById/{agentId}")]
         public async Task<IActionResult> GetAgentViewModelByAgentIdAsync(int agentId)
@@ -49,6 +58,18 @@ namespace AgentReferralSystem.Api.Controllers
             if (result == null) return NotFound();
 
             return Ok(result);
+        }
+
+        [HttpGet("GetSaleTypes")]
+        public async Task<IActionResult> GetSaleTypes()
+        {
+            {
+                var result = await _agentService.GetSaleTypes();
+
+                if (result == null) return NotFound();
+
+                return Ok(result);
+            }
         }
 
         [HttpPost("AddOrUpdateAgent")]

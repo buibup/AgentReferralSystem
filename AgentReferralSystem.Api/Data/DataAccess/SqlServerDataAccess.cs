@@ -64,6 +64,32 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
+        public async Task<IEnumerable<Agent>> GetAgentList()
+        {
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    var query = "select * from dbo.Agent";
+                    var data = (await conn.QueryAsync<Agent>(query, null, tran, null, null));
+                    tran.Commit();
+                    return data;
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
+        }
+
         public async Task<AgentOutput> GetAgentByIdAsync(int agentId)
         {
             var agent = new AgentOutput();
@@ -83,6 +109,32 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
 
             return agent;
+        }
+
+        public async Task<IEnumerable<SaleType>> GetSaleTypes()
+        {
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    var query = "select * from dbo.SaleType";
+                    var data = (await conn.QueryAsync<SaleType>(query, null, tran, null, null));
+                    tran.Commit();
+                    return data;
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
         }
     }
 }

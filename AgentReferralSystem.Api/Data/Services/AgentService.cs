@@ -41,6 +41,14 @@ namespace AgentReferralSystem.Api.Data.Services
             await _sqlServerDataAccess.DeleteAgentAsync(agentId);
         }
 
+        
+        public async Task<IEnumerable<Agent>> GetAgentList()
+        {
+            var result = await _sqlServerDataAccess.GetAgentList();
+
+            return result;
+        }
+
         public async Task<AgentOutput> GetAgentByIdAsync(int agentId)
         {
             var model = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
@@ -79,6 +87,13 @@ namespace AgentReferralSystem.Api.Data.Services
         public async Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync(string search)
         {
             var result = await _cacheDataAccess.GetPACReferralTypeAllAsync(search);
+
+            return result;
+        }
+
+        public async Task<IEnumerable<SaleType>> GetSaleTypes()
+        {
+            var result = await _sqlServerDataAccess.GetSaleTypes();
 
             return result;
         }
