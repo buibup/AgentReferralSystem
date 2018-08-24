@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Export\" />
-    <Folder Include="Data\Models\ExcelTemplate\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
