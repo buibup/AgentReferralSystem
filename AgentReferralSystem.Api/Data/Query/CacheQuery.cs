@@ -32,6 +32,32 @@ namespace AgentReferralSystem.Api.Data.Query
             return query;
         }
 
+        public static string GetPACReferralTypeById(int agentid)
+        {
+            string query = string.Empty;
+
+            if (string.IsNullOrEmpty(agentid.ToString()))
+            {
+                query = @"
+                SELECT REFT_RowId, REFT_Code, REFT_Desc
+                FROM PAC_ReferralType
+                WHERE REFT_DateTo >= CURRENT_DATE OR REFT_DateTo IS NULL
+                ORDER BY REFT_Desc ASC";
+            }
+            else
+            {
+                query = $@"SELECT REFT_RowId, REFT_Code, REFT_Desc
+                FROM PAC_ReferralType
+                WHERE REFT_DateTo >= CURRENT_DATE OR REFT_DateTo IS NULL
+                AND REFT_RowId = '{agentid}'
+                ";
+            }
+
+
+            return query;
+        }
+
+
         public static string GetARPatientsBillsByReferralTypeRowId()
         {
             return @"

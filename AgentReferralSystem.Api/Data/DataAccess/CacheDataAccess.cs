@@ -55,6 +55,26 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
+        public async Task<PACReferralType> GetPACReferralTypeByIdAsync(int agentid)
+        {
+            try
+            {
+                using (var conn = new OdbcConnection(_connectionStrings.Cache))
+                {
+                    var data = await conn.QueryAsync<PACReferralType>(CacheQuery.GetPACReferralTypeById(agentid));
+
+                    var result = data.FirstOrDefault();
+
+                    return result;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<IEnumerable<PACReferralType>> GetPACReferralTypeAllAsync(string search)
         {
             try

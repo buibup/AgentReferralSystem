@@ -50,6 +50,17 @@ namespace AgentReferralSystem.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetPACReferralTypesById")]
+        [HttpGet("GetPACReferralTypesById/{agentId}")]
+        public async Task<IActionResult> GetPACReferralTypesByIdAsync(int agentId)
+        {
+            var result = await _agentService.GetPACReferralTypesByIdAsync(agentId);
+
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
+
         [HttpGet("GetAgentById/{agentId}")]
         public async Task<IActionResult> GetAgentByIdAsync(int agentId)
         {

@@ -84,6 +84,13 @@ namespace AgentReferralSystem.Api.Data.Services
             return result;
         }
 
+        public async Task<PACReferralType> GetPACReferralTypesByIdAsync(int agentId)
+        {
+            var result = await _cacheDataAccess.GetPACReferralTypeByIdAsync(agentId);
+
+            return result;
+        }
+
         public async Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync(string search)
         {
             var result = await _cacheDataAccess.GetPACReferralTypeAllAsync(search);
