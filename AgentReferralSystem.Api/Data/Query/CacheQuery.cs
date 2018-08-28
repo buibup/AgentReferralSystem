@@ -46,7 +46,8 @@ namespace AgentReferralSystem.Api.Data.Query
             }
             else
             {
-                query = $@"SELECT REFT_RowId, REFT_Code, REFT_Desc
+                query = $@"
+                SELECT REFT_RowId, REFT_Code, REFT_Desc
                 FROM PAC_ReferralType
                 WHERE REFT_DateTo >= CURRENT_DATE OR REFT_DateTo IS NULL
                 AND REFT_RowId = '{agentid}'

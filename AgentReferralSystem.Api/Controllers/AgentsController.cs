@@ -86,11 +86,18 @@ namespace AgentReferralSystem.Api.Controllers
         [HttpPost("AddOrUpdateAgent")]
         public async Task<IActionResult> AddOrUpdateAgentAsync(Agent agent)
         {
-            if (agent == null) return BadRequest();
+            try
+            {
+                if (agent == null) return BadRequest();
+                //throw new Exception("Test");
+                await _agentService.AddOrUpdateAgentAsync(agent);
 
-            await _agentService.AddOrUpdateAgentAsync(agent);
-
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpDelete("DeleteAgent/{agentId}")]

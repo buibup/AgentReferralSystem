@@ -33,7 +33,14 @@ namespace AgentReferralSystem.Api.Data.Services
 
         public async Task AddOrUpdateAgentAsync(Agent agent)
         {
-            await _sqlServerDataAccess.AddOrUpdateAgentAsync(agent);
+            try
+            {
+                await _sqlServerDataAccess.AddOrUpdateAgentAsync(agent);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task DeleteAgentAsync(int agentId)

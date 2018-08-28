@@ -22,33 +22,51 @@ namespace AgentReferralSystem.Api.Data.DataAccess
 
         public async Task AddOrUpdateAgentAsync(Agent agent)
         {
-            using(var conn = new SqlConnection(_connectionStrings.SqlServer))
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
             {
-                var agentParam = new DynamicParameters();
-                agentParam.Add("@AgentId", agent.AgentId);
-                agentParam.Add("@AgentCode", agent.AgentCode);
-                agentParam.Add("@AgentDesc", agent.AgentDesc);
-                agentParam.Add("@AgreementDate", agent.AgreementDate);
-                agentParam.Add("@DateFrom", agent.StartDate);
-                agentParam.Add("@DateTo", agent.EndDate);
-                agentParam.Add("@Remark", agent.Remark);
-
-                await conn.ExecuteAsync("SaveAgent", agentParam, commandType: CommandType.StoredProcedure);
-
-                var agentSaleTypeParam = new DynamicParameters();
-                foreach(var item in agent.AgentSaleTypes)
+                conn.Open();
+                IDbTransaction tran = conn.BeginTransaction();
+                try
                 {
-                    agentSaleTypeParam.Add("@BaseCommission", item.BaseCommission);
-                    agentSaleTypeParam.Add("@Target", item.Target);
-                    agentSaleTypeParam.Add("@TargetPeriod", item.TargetPeriod);
-                    agentSaleTypeParam.Add("@IncreaseIfTargetMet", item.IncreaseIfTargetMet);
-                    agentSaleTypeParam.Add("@Maximum", item.Maximum);
-                    agentSaleTypeParam.Add("@ResetToBase", item.ResetToBase);
-                    agentSaleTypeParam.Add("@ApplicableTargetInrease", item.ApplicableTargetInrease);
-                    agentSaleTypeParam.Add("@SaleTypeId", item.SaleTypeId);
-                    agentSaleTypeParam.Add("@AgentId", item.AgentId);
+                    var agentParam = new DynamicParameters();
+                    agentParam.Add("@AgentId", agent.AgentId);
+                    agentParam.Add("@AgentCode", agent.AgentCode);
+                    agentParam.Add("@AgentDesc", agent.AgentDesc);
+                    agentParam.Add("@AgreementDate", agent.AgreementDate);
+                    agentParam.Add("@DateFrom", agent.StartDate);
+                    agentParam.Add("@DateTo", agent.EndDate);
+                    agentParam.Add("@Remark", agent.Remark ?? "");
 
-                    await conn.ExecuteAsync("SaveAgentsSaleTypes", agentSaleTypeParam, commandType: CommandType.StoredProcedure);
+                    await conn.ExecuteAsync("SaveAgent", agentParam, transaction: tran , commandType: CommandType.StoredProcedure);
+
+                    var agentSaleTypeParam = new DynamicParameters();
+                    foreach (var item in agent.AgentSaleTypes)
+                    {
+                        agentSaleTypeParam.Add("@BaseCommission",item.BaseCommission);
+                        agentSaleTypeParam.Add("@Target", item.Target);
+                        agentSaleTypeParam.Add("@TargetPeriod", item.TargetPeriod);
+                        agentSaleTypeParam.Add("@IncreaseIfTargetMet", item.IncreaseIfTargetMet);
+                        agentSaleTypeParam.Add("@Maximum", item.Maximum);
+                        agentSaleTypeParam.Add("@ResetToBase", item.ResetToBase);
+                        agentSaleTypeParam.Add("@ApplicableTargetInrease", item.ApplicableTargetInrease);
+                        agentSaleTypeParam.Add("@SaleTypeId", item.SaleTypeId);
+                        agentSaleTypeParam.Add("@AgentId", item.AgentId);
+
+                        await conn.ExecuteAsync("SaveAgentsSaleTypes", agentSaleTypeParam,transaction: tran, commandType: CommandType.StoredProcedure);
+                    }
+                    //throw new Exception("Test");
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+                finally
+                {
+                    tran.Dispose();
+                    conn.Close();
+                    conn.Dispose();
                 }
             }
         }
