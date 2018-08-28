@@ -36,6 +36,9 @@ namespace AgentReferralSystem.Api.Controllers
 
             if (result == null || string.IsNullOrEmpty(result.AgentName)) return NotFound();
 
+            // test export excel
+            //_agentService.ExportAgent(result);
+
             return Ok(result);
         }
 

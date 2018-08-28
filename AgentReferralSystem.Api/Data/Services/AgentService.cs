@@ -166,5 +166,77 @@ namespace AgentReferralSystem.Api.Data.Services
                 }
             });
         }
+
+        public void ExportAgent(AgentViewModel model)
+        {
+            string sWebRootFolder = $@"{_hostingEnvironment.ContentRootPath}/Data/Export";
+            string sFileName = $"Agent-{model.AgentName}.xlsx";
+
+            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+            if (file.Exists)
+            {
+                file.Delete();
+                file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+            }
+
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                ExcelWorksheet worksheet = null;
+                var years = model.TotalSalesPerYear.Select(d => d.Year).Distinct();
+
+                foreach (var year in years)
+                {
+                    var agentYear = model.TotalSalesPerYear.Where(a => a.Year == year).FirstOrDefault();
+
+                    worksheet = package.Workbook.Worksheets.Add($"{year}");
+
+                    worksheet.Cells[1, 1].Value = $"Total Sales {year}";
+                    worksheet.Cells[2, 1].Value = $"Total Commission {year}";
+
+                    worksheet.Cells[1, 2].Value = agentYear.TotalSalesYear;
+                    worksheet.Cells[2, 2].Value = agentYear.TotalCommissionYear;
+
+                    worksheet.Cells[4, 1].Value = "Month";
+                    worksheet.Cells[4, 2].Value = "Total Membership";
+                    worksheet.Cells[4, 3].Value = "Total BWC Services";
+                    worksheet.Cells[4, 4].Value = "Total Sales";
+                    worksheet.Cells[4, 5].Value = "Membership Revenue";
+                    worksheet.Cells[4, 6].Value = "Membership Commission Revenue";
+                    worksheet.Cells[4, 7].Value = "ServiceMember Revenue";
+                    worksheet.Cells[4, 8].Value = "ServiceMember Commission Revenue";
+                    worksheet.Cells[4, 9].Value = "ServiceNonMember Revenue";
+                    worksheet.Cells[4, 10].Value = "ServiceNonMember Commission Revenue";
+                    worksheet.Cells[4, 11].Value = "Compounding Member Revenue";
+                    worksheet.Cells[4, 12].Value = "Compounding Member Commission Revenue";
+                    worksheet.Cells[4, 13].Value = "Compounding NonMember Revenue";
+                    worksheet.Cells[4, 14].Value = "Compounding NonMember Commission Revenue";
+                    worksheet.Cells[4, 15].Value = "Total Commission Revenue";
+
+                    for (int i = 1; i <= 12; i++)
+                    {
+                        var agentMonth = agentYear.TotalSalesPerMonth.Where(am => (int)am.Month == i).FirstOrDefault();
+                        if(agentMonth == null) agentMonth = new TotalSalesPerMonthViewModel();
+
+                        worksheet.Cells[i + 4, 1].Value = $"{(Month)i}";
+                        worksheet.Cells[i + 4, 2].Value = agentMonth.MembershipCount;
+                        worksheet.Cells[i + 4, 3].Value = agentMonth.BWCServicesCount;
+                        worksheet.Cells[i + 4, 4].Value = agentMonth.TotalSales;
+                        worksheet.Cells[i + 4, 5].Value = agentMonth.MembershipSum;
+                        worksheet.Cells[i + 4, 6].Value = agentMonth.MembershipSumCommission;
+                        worksheet.Cells[i + 4, 7].Value = agentMonth.ServiceMemberSum;
+                        worksheet.Cells[i + 4, 8].Value = agentMonth.ServiceMemberSumCommission;
+                        worksheet.Cells[i + 4, 9].Value = agentMonth.ServiceNonMemberSum;
+                        worksheet.Cells[i + 4, 10].Value = agentMonth.ServiceNonMemberSumCommission;
+                        worksheet.Cells[i + 4, 11].Value = agentMonth.CompoundingMemberSum;
+                        worksheet.Cells[i + 4, 12].Value = agentMonth.CompoundingMemberSumCommission;
+                        worksheet.Cells[i + 4, 13].Value = agentMonth.CompoundingNonMemberSum;
+                        worksheet.Cells[i + 4, 14].Value = agentMonth.CompoundingNonMemberSumCommission;
+                        worksheet.Cells[i + 4, 15].Value = agentMonth.CommissionSum;
+                    }
+                }
+
+                package.Save();
+            }
+        }
     }
 }
