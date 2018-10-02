@@ -8,18 +8,18 @@ namespace AgentReferralSystem.Api.Data.Models.SqlServer
 {
     public class AgentsSaleTypes
     {
-        [Column(TypeName = "decimal(3, 2)")]
+        [Column(TypeName = "decimal(5, 2)")]
         public decimal BaseCommission { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
+        [Column(TypeName = "decimal(14, 2)")]
         public decimal Target { get; set; }
 
         public int TargetPeriod { get; set; }
 
-        [Column(TypeName = "decimal(3, 2)")]
+        [Column(TypeName = "decimal(5, 2)")]
         public decimal IncreaseIfTargetMet { get; set; }
 
-        [Column(TypeName = "decimal(3, 2)")]
+        [Column(TypeName = "decimal(5, 2)")]
         public decimal Maximum { get; set; }
 
         public int ResetToBase { get; set; }

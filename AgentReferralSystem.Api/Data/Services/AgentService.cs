@@ -47,7 +47,6 @@ namespace AgentReferralSystem.Api.Data.Services
         {
             await _sqlServerDataAccess.DeleteAgentAsync(agentId);
         }
-
         
         public async Task<IEnumerable<Agent>> GetAgentList()
         {
@@ -71,7 +70,6 @@ namespace AgentReferralSystem.Api.Data.Services
             //var agent = AgentMoq.GetAgentByAgentId(agentId);
 
             var agent = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
-
             // get all patientbill of agent
             var patientsBills = (await _cacheDataAccess.GetARPatientsBillsByReferralTypeRowIdAsync(agentId)).ToList();
 
@@ -79,17 +77,55 @@ namespace AgentReferralSystem.Api.Data.Services
             {
                 // distinct patients by papmiRowId
                 var papmiRowIdList = patientsBills.Select(p => p.PAADM_PAPMI_DR).Distinct();
-
+                 
                 // get all patient register membership
                 var memberRegisList = await _cacheDataAccess.GetQBWCMEMBERSByPapmiRowIdListAsync(papmiRowIdList);
 
                 var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
 
+                //throw new Exception("Test");
                 result = agent.AgentViewModelProcess(patientsBills, memberRegisList, itemCompoundingList);
             }
 
             return result;
         }
+
+        public async Task<List<AgentReportViewModel>> LoadAgentSummarizeByIdAsync(int agentId, int Year, int Month)
+        {
+            var result = new List<AgentReportViewModel>();
+
+            var agent = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
+            // get all patientbill of agent
+            var patientsBills = (await _cacheDataAccess.GetARPatientsBillsByReferralTypeRowIdAsync(agentId)).ToList();
+
+            // get all CommissionItem of agent
+            var BillList = (await _sqlServerDataAccess.GetCommissionItemById(agentId)).ToList();
+
+            #region Moq
+            // get agent moq
+            //var agent = AgentMoq.GetAgentByAgentId(agentId);
+            var ConfigList = PercentConfigMoq.getConfig();
+            var MoqBill = ARPatientBillMoq.getPatientBillList();
+            #endregion
+
+            if (patientsBills.Count > 0)
+            {
+                // distinct patients by papmiRowId
+                var papmiRowIdList = patientsBills.Select(p => p.PAADM_PAPMI_DR).Distinct();
+
+                // get all patient register membership
+                //var memberRegisList = await _cacheDataAccess.GetQBWCMEMBERSByPapmiRowIdListAsync(papmiRowIdList);
+
+                //var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
+
+                //throw new Exception("Test");
+                result = agent.ProcessCommission(patientsBills, BillList, ConfigList, Year, Month);
+            }
+
+            return result;
+        }
+
+        //public async Task<>
 
         public async Task<PACReferralType> GetPACReferralTypesByIdAsync(int agentId)
         {
@@ -237,6 +273,13 @@ namespace AgentReferralSystem.Api.Data.Services
 
                 package.Save();
             }
+        }
+
+        public async Task<IEnumerable<RewardItem>> GetRewardList()
+        {
+            var result = await _sqlServerDataAccess.GetRewardList();
+
+            return result;
         }
     }
 }

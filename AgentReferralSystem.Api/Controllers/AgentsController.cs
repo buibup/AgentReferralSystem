@@ -42,6 +42,16 @@ namespace AgentReferralSystem.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("LoadAgentSummarizeById/{agentId}-{Year}-{Month}")]
+        public async Task<IActionResult> LoadAgentSummarizeById(int agentId, int Year,int Month)
+        {
+            var result = await _agentService.LoadAgentSummarizeByIdAsync(agentId, Year, Month);
+
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
+
         [HttpGet("GetPACReferralTypes")]
         [HttpGet("GetPACReferralTypes/{search}")]
         public async Task<IActionResult> GetPACReferralTypesAsync(string search = "")
@@ -109,6 +119,23 @@ namespace AgentReferralSystem.Api.Controllers
             await _agentService.DeleteAgentAsync(agentId);
 
             return NoContent();
+        }
+
+        [HttpGet("GetRewardList")]
+        public async Task<IActionResult> GetRewardList()
+        {
+            try
+            {
+                var result = await _agentService.GetRewardList();
+
+                if (result == null) return NotFound();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

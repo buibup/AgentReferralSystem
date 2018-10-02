@@ -14,8 +14,13 @@ namespace AgentReferralSystem.Api.Data.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Remark { get; set; }
+        public decimal TotalCommission { get; set; }
+        public decimal TotalSale { get; set; }
+        public int CurrentReward { get; set; }
+        public int TotalReward { get; set; }
+        public DateTime CreateDate { get; set; }
 
         public ICollection<SaleTypesOutput> AgentSaleTypes { get; set; }
-        public int RetroCutoffMonth { get; set; }
+        //public int RetroCutoffMonth { get; set; }
     }
 }

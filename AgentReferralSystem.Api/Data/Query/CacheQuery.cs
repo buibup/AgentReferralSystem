@@ -63,11 +63,16 @@ namespace AgentReferralSystem.Api.Data.Query
         {
             return @"
                 SELECT DISTINCT 
+                    ARPBL_RowId,
+                    ARPBL_PAADM_DR,
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR,
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR->PAPMI_No,
-                    ARPBL_PAADM_DR,
+                    ARPBL_PAADM_DR->PAADM_PAPMI_DR->PAPMI_Name,
+                    ARPBL_PAADM_DR->PAADM_PAPMI_DR->PAPMI_Name2,
                     ARPBL_PAADM_DR->PAADM_ADMNO EpisodeNo,
 	                ARPBL_AdmDate EpisodeDate,
+                    ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Code,
+                    ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Desc,
 	                ARPBL_DischDate DischargeDate,
 	                ARPBL_DatePrinted BillPrintedDate,
 	                ARPBL_InsuranceType_DR->INST_Desc,

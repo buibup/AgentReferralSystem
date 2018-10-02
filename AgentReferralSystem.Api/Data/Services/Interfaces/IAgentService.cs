@@ -13,6 +13,7 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
     {
         Task<IEnumerable<Agent>> GetAgentList();
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
+        Task<List<AgentReportViewModel>> LoadAgentSummarizeByIdAsync(int agentId, int Year, int Month);
         Task<PACReferralType> GetPACReferralTypesByIdAsync(int agentId);
         Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync(string search);
         Task<AgentOutput> GetAgentByIdAsync(int agentId);
@@ -21,5 +22,6 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
         Task DeleteAgentAsync(int agentId);
         Task SaveExportAgentAsync(AgentViewModel model);
         void ExportAgent(AgentViewModel model);
+        Task<IEnumerable<RewardItem>> GetRewardList();
     }
 }

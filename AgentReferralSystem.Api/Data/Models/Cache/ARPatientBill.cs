@@ -7,11 +7,16 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
 {
     public class ARPatientBill
     {
-        public int PAADM_PAPMI_DR { get; set; }
-        public string PAPMI_No { get; set; }
+        public int ARPBL_RowId { get; set; }
         public int ARPBL_PAADM_DR { get; set; }
+        public int PAADM_PAPMI_DR { get; set; }
+        public string PAPMI_Name { get; set; }
+        public string PAPMI_Name2 { get; set; }
+        public string PAPMI_No { get; set; }
         public string EpisodeNo { get; set; }
         public DateTime EpisodeDate { get; set; }
+        public string CTPCP_Code { get; set; }
+        public string CTPCP_Desc { get; set; }
         public DateTime? DischargeDate { get; set; } 
         public DateTime? BillPrintedDate { get; set; }
         public string INST_Desc { get; set; }
@@ -33,5 +38,8 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
         public int REFT_RowId { get; set; }
         public string REFT_Code { get; set; }
         public string REFT_Desc { get; set; }
+
+        //Calculated Zone
+        public decimal CommissionAmount { get; set; }
     }
 }

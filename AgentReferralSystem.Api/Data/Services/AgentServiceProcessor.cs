@@ -3,6 +3,7 @@ using AgentReferralSystem.Api.Data.Models;
 using AgentReferralSystem.Api.Data.Models.Cache;
 using AgentReferralSystem.Api.Data.Models.Calc;
 using AgentReferralSystem.Api.Data.Models.SqlServer;
+using AgentReferralSystem.Api.Data.Moq;
 using AgentReferralSystem.Api.Data.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace AgentReferralSystem.Api.Data.Services
 {
     public static class AgentServiceProcessor
     {
+        #region dynamicRate
         public static SaleTypesCalc SaleTypesCalcBase { get; set; } = new SaleTypesCalc();
 
         public static AgentViewModel AgentViewModelProcess(this AgentOutput agent,
@@ -35,7 +37,7 @@ namespace AgentReferralSystem.Api.Data.Services
 
             // set agent base
             var agentBase = agent;
-            agentBase.RetroCutoffMonth = agentBase.StartDate.Month;
+            //agentBase.RetroCutoffMonth = agentBase.StartDate.Month;
             var agentsSaleTypes = agentBase.AgentSaleTypes;
             #endregion
 
@@ -452,5 +454,77 @@ namespace AgentReferralSystem.Api.Data.Services
             }
             #endregion
         }
+
+        #endregion
+                
+        #region fixedRateCommission
+
+        public static List<AgentReportViewModel> ProcessCommission(this AgentOutput agent,
+            IEnumerable<ARPatientBill> patientBills,
+            IEnumerable<CommissionItem> BillList,
+            List<PercentConfig> ConfigList,
+            int Year,int Month)
+        {
+            // Get UnRegisPatientBill
+            var UnRegisBill = CommonCalc.FilterUnRegisItem(patientBills, BillList.ToList());
+
+            //GEN Report
+            List<AgentReportViewModel> output = ProcessYearlyCommission(patientBills, ConfigList, Year, Month);
+
+            //throw new Exception("Test"); 
+            return output;
+        }
+
+        private static List<AgentReportViewModel> ProcessYearlyCommission(
+            IEnumerable<ARPatientBill> patientBills,
+            List<PercentConfig> ConfigList,
+            int Year, int Month)
+        {
+            var result = new List<AgentReportViewModel>();
+            var patientYears = patientBills.OrderBy(x => x.EpisodeDate).Select(d => d.EpisodeDate.Year).Distinct();
+            int startYear = 0;
+            int endYear = 0;
+            if (Year != 0) { startYear = Year; endYear = Year; }
+            else { startYear = patientYears.First(); endYear = patientYears.Last(); }
+            for (int i = startYear; i <= endYear; i++)
+            {
+                var targetPatientBills = patientBills.Where(x => x.EpisodeDate.Year == i);
+                if (targetPatientBills.Count() > 0)
+                {
+                    var yearResult = new AgentReportViewModel();
+                    yearResult.year = i;
+                    yearResult.CommissionBillList = ProcessMonthlyCommission(targetPatientBills, ConfigList, Month);
+                    result.Add(yearResult);
+                }
+            }
+            return result;
+        }
+
+        private static List<ComBillViewModel> ProcessMonthlyCommission(
+            IEnumerable<ARPatientBill> patientBills,
+            IEnumerable<PercentConfig> ConfigList,
+            int Month)
+        {
+            int startMonth = 0;
+            int endMonth = 0;   
+            if (Month != 0) { startMonth = Month; endMonth = Month; }
+            else { startMonth = 1; endMonth = 12; }
+            var result = new List<ComBillViewModel>();
+            for (int i = startMonth; i <= endMonth; i++)
+            {
+                var targetPatientBills = patientBills.Where(x => x.EpisodeDate.Month == i);
+                if (targetPatientBills.Count() > 0)
+                {
+                    var output = CommonCalc.calculateComByItemList(targetPatientBills, ConfigList);
+                    output.month = i;
+                    result.Add(output);
+                }
+            }
+            return result;
+        }
+
+        #endregion
+
     }
 }
+    
