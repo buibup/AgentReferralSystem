@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AgentReferralSystem.Api.Data.Models.SqlServer
 {
-    public class RewardHistory
+    public class RewardItemHistory
     {
         public int Id { get; set; }
         public int RewardItemId { get; set; }

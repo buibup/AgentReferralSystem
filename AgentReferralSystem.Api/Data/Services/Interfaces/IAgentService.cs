@@ -11,17 +11,24 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
 {
     public interface IAgentService
     {
+        Task<Dictionary<string, object>> GetAgentProfile(int agentId);
+        Task<Dictionary<string, object>> GetAgentCustomer(int agentId);
+        Task<Dictionary<string, object>> GetAgentCommission(int agentId);
+        Task<Dictionary<string, object>> GetAgentTarget(int agentId);
         Task<IEnumerable<Agent>> GetAgentList();
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
         Task<List<AgentReportViewModel>> LoadAgentSummarizeByIdAsync(int agentId, int Year, int Month);
         Task<PACReferralType> GetPACReferralTypesByIdAsync(int agentId);
         Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync(string search);
-        Task<AgentOutput> GetAgentByIdAsync(int agentId);
+        Task<Agent> GetAgentByIdAsync(int agentId);
         Task<IEnumerable<SaleType>> GetSaleTypes();
         Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);
         Task SaveExportAgentAsync(AgentViewModel model);
         void ExportAgent(AgentViewModel model);
-        Task<IEnumerable<RewardItem>> GetRewardList();
+
+        Task<IEnumerable<CommissionItem>> getItemlist();
+
+        Task UploadAgentImage(int agentId, string imageData);
     }
 }

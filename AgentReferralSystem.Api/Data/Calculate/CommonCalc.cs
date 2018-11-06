@@ -11,6 +11,13 @@ namespace AgentReferralSystem.Api.Data.Calculate
 {
     public static class CommonCalc
     {
+        public static bool checkLastday()
+        {
+            DateTime now = DateTime.Now;
+            int totalDay = DateTime.DaysInMonth(now.Year, now.Month);
+            return now.Day == totalDay;
+        }
+
         public static string getMonth(int monthNo)
         {
             switch(monthNo)

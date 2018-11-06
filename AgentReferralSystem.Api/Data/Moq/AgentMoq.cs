@@ -16,9 +16,9 @@ namespace AgentReferralSystem.Api.Data.Moq
                 AgentCode = "MT017",
                 AgentDesc = "John H. Mramba (Kenya)",
                 AgreementDate = DateTime.Now,
-                StartDate = DateTime.Now.AddDays(1),
-                EndDate = DateTime.Now.AddYears(1),
-                AgentSaleTypes = 235.GetAgentsSaleTypesByAgentId()
+                DateFrom = DateTime.Now.AddDays(1),
+                DateTo = DateTime.Now.AddYears(1),
+                //AgentSaleTypes = 235.GetAgentsSaleTypesByAgentId()
             };
 
             return agent;

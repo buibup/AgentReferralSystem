@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace AgentReferralSystem.Api.Data.Services
 {
     public class AgentService : IAgentService
-    {
+    { 
         private readonly ICacheDataAccess _cacheDataAccess;
         private readonly ISqlServerDataAccess _sqlServerDataAccess;
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -55,13 +55,155 @@ namespace AgentReferralSystem.Api.Data.Services
             return result;
         }
 
-        public async Task<AgentOutput> GetAgentByIdAsync(int agentId)
+        public async Task<Dictionary<string,object>> GetAgentProfile(int agentId)
+        {
+            try
+            {
+                var result = new Dictionary<string, object>();
+                var model = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
+                var config = await _sqlServerDataAccess.GetConfigByCriteria("GlobalCommissionRate");
+
+                if (model != null)
+                {
+                    result.Add("status", "OK");
+                    result.Add("Message", "");
+                    result.Add("data", new AgentProfileViewModel(model,config.ToList()));
+                }
+                else
+                {
+                    result.Add("status", "Error");
+                    result.Add("Message", "Can't Load Agent with AgentId " + agentId);
+                }
+                return result;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Dictionary<string, object>> GetAgentCustomer(int agentId)
+        {
+            try
+            {
+                var result = new Dictionary<string, object>();
+                var customerList = await _sqlServerDataAccess.GetCustomerByAgentId(agentId);
+                if (customerList != null && customerList.Count() > 0)
+                {
+                    //foreach(int customerId in customerList)
+                    //{
+                    //    var ItemList = (await _sqlServerDataAccess.GetCommissionItemById(agentId)).ToList();
+                    //    dataList = AgentCustomerViewModel.GenerateACVMList(ItemList);
+
+                    //    var ItemList = (await _sqlServerDataAccess.GetCommissionItemById(agentId, customerId)).ToList();
+                    //    AgentCustomerViewModel item = new AgentCustomerViewModel(ItemList);
+                    //    dataList.Add(item);
+                    //}
+
+                    var ItemList = (await _sqlServerDataAccess.GetCommissionItemById(agentId)).ToList();
+                    var data = AgentCustomerOverall.GenerateCustomerOverall(ItemList);
+                    result.Add("status", "OK");
+                    result.Add("Message", "");
+                    result.Add("data", data);
+                }
+                else
+                {
+                    result.Add("status", "Error");
+                    result.Add("Message", "No Customer with AgentId: " + agentId);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Dictionary<string, object>> GetAgentCommission(int agentId)
+        {
+            try
+            {
+                var result = new Dictionary<string, object>();
+                var itemList = (await _sqlServerDataAccess.GetCommissionItemById(agentId)).ToList();
+                var configList = (await _sqlServerDataAccess.GetConfigByCriteria("GlobalCommissionRate")).ToList();
+                if (itemList != null && itemList.Count() > 0)
+                {
+                    var Now = DateTime.Now;
+                    var currentMonthItemList = itemList.Where(x => x.Episode_Date.Month == Now.Month && x.Episode_Date.Year == Now.Year).ToList();
+                    if(currentMonthItemList.Count > 0)  
+                    {
+                        var data = AgentCommissionViewModel.GenerateAgentComVMList(itemList, configList);
+                        result.Add("status", "OK");
+                        result.Add("Message", "");
+                        result.Add("data", data);
+                    }
+                    else
+                    {
+                        result.Add("status", "Error");
+                        result.Add("Message", "No CommissionItem In Date : " + Now.ToString());
+                        result.Add("data", new List<Dictionary<string,object>>());
+
+                    }
+                }
+                else
+                {
+                    result.Add("status", "Error");
+                    result.Add("Message", "No CommissionItem with AgentId: " + agentId);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Dictionary<string,object>> GetAgentTarget(int agentId)
+        {
+            try
+            {
+                var result = new Dictionary<string, object>();
+                var customerList = await _sqlServerDataAccess.GetCustomerByAgentId(agentId);
+                var dataList = new List<AgentCustomerViewModel>();
+                if (customerList != null && customerList.Count() > 0)
+                {
+                    foreach (int customerId in customerList)
+                    {
+                        var ItemList = (await _sqlServerDataAccess.GetCommissionItemById(agentId, customerId)).ToList();
+                        AgentCustomerViewModel item = new AgentCustomerViewModel(ItemList);
+                        dataList.Add(item);
+                    }
+                    result.Add("status", "OK");
+                    result.Add("Message", "");
+                    result.Add("data", dataList);
+                }
+                else
+                {
+                    result.Add("status", "Error");
+                    result.Add("Message", "No Customer with AgentId: " + agentId);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Agent> GetAgentByIdAsync(int agentId)
         {
             var model = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
-
             return model;
         }
 
+        public async Task UploadAgentImage(int agentId, string ImageData)
+        {
+            var agent = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
+
+            AgentServiceProcessor.SaveImage(agent, ImageData);
+        }
+
+        //Old Calculation
         public async Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId)
         {
             var result = new AgentViewModel();
@@ -84,12 +226,13 @@ namespace AgentReferralSystem.Api.Data.Services
                 var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
 
                 //throw new Exception("Test");
-                result = agent.AgentViewModelProcess(patientsBills, memberRegisList, itemCompoundingList);
+                //result = agent.AgentViewModelProcess(patientsBills, memberRegisList, itemCompoundingList);
             }
 
             return result;
         }
 
+        //Manual Load & Calculation  
         public async Task<List<AgentReportViewModel>> LoadAgentSummarizeByIdAsync(int agentId, int Year, int Month)
         {
             var result = new List<AgentReportViewModel>();
@@ -119,13 +262,11 @@ namespace AgentReferralSystem.Api.Data.Services
                 //var itemCompoundingList = await _cacheDataAccess.GetARCItmMastCompoundingAsync();
 
                 //throw new Exception("Test");
-                result = agent.ProcessCommission(patientsBills, BillList, ConfigList, Year, Month);
+               // result = agent.ProcessCommission(patientsBills, BillList, ConfigList, Year, Month);
             }
 
             return result;
         }
-
-        //public async Task<>
 
         public async Task<PACReferralType> GetPACReferralTypesByIdAsync(int agentId)
         {
@@ -275,11 +416,12 @@ namespace AgentReferralSystem.Api.Data.Services
             }
         }
 
-        public async Task<IEnumerable<RewardItem>> GetRewardList()
+        public async Task<IEnumerable<CommissionItem>> getItemlist()
         {
-            var result = await _sqlServerDataAccess.GetRewardList();
+            var result = await _sqlServerDataAccess.GetItemList();
 
             return result;
         }
+
     }
 }

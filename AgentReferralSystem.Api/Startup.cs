@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using AgentReferralSystem.Api.Data.Config;
 using AgentReferralSystem.Api.Data.DataAccess;
 using AgentReferralSystem.Api.Data.DataAccess.Interfaces;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.FileProviders;
 
 namespace AgentReferralSystem.Api
 {
@@ -31,14 +33,25 @@ namespace AgentReferralSystem.Api
         public void ConfigureServices(IServiceCollection services)
         {
             // set value connection string
-            var config = new ConnectionStrings();
-            Configuration.Bind("ConnectionStrings", config);
-            services.AddSingleton(config);
+            var connectionStrings = new ConnectionStrings();
+            Configuration.Bind("ConnectionStrings", connectionStrings);
+            services.AddSingleton(connectionStrings);
+
+            var logfilePathConfig = new LogFilePath();
+            Configuration.Bind("LogFilePath", logfilePathConfig);
+            services.AddSingleton(logfilePathConfig);
+
+            var logfileNameConfig = new LogFileName();
+            Configuration.Bind("LogFileName", logfileNameConfig);
+            services.AddSingleton(logfileNameConfig);
 
             services.AddTransient<ICacheDataAccess, CacheDataAccess>();
             services.AddTransient<ISqlServerDataAccess, SqlServerDataAccess>();
 
             services.AddTransient<IAgentService, AgentService>();
+            services.AddTransient<IRewardService, RewardService>();
+            services.AddTransient<IScheduleService, ScheduleService>();
+
 
             services.AddSwaggerDocumentation();
 
@@ -65,6 +78,22 @@ namespace AgentReferralSystem.Api
                 .AllowCredentials());
 
             app.UseMvc();
+
+            app.UseStaticFiles(); // For the wwwroot folder
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
+                RequestPath = "/Images"
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
+                RequestPath = "/Images"
+            });
         }
     }
 }

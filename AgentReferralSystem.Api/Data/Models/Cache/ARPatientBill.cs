@@ -10,9 +10,24 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
         public int ARPBL_RowId { get; set; }
         public int ARPBL_PAADM_DR { get; set; }
         public int PAADM_PAPMI_DR { get; set; }
+        public int PAPMI_RowId { get; set; }
+        public string PAPMI_ID { get; set; }
+        public string PAPMI_No { get; set; }
         public string PAPMI_Name { get; set; }
         public string PAPMI_Name2 { get; set; }
-        public string PAPMI_No { get; set; }
+        public int CTSEX_RowId { get; set; }
+        public string CTSEX_Code { get; set; }
+        public string CTSEX_Desc { get; set; }
+        public string CTSEX_CodeTranslated { get; set; }
+        public string CTSEX_DescTranslated { get; set; }
+        public string PAPMI_DOB { get; set; }
+        public string PAPMI_ForeignPhoneNo { get; set; }
+        public int PCAT_RowId { get; set; }
+        public string PCAT_Code { get; set; }
+        public string PCAT_Desc { get; set; }
+        public string PAPMI_Alias { get; set; }
+        public string PAPMI_IPNo { get; set; }
+        public string PAPMI_OPNo { get; set; }
         public string EpisodeNo { get; set; }
         public DateTime EpisodeDate { get; set; }
         public string CTPCP_Code { get; set; }
@@ -38,6 +53,13 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
         public int REFT_RowId { get; set; }
         public string REFT_Code { get; set; }
         public string REFT_Desc { get; set; }
+        public DateTime REFT_DateFrom { get; set; }
+        public DateTime REFT_DateTo { get; set; }
+        public string REFT_NationalCode { get; set; }
+        public DateTime REFT_RefStDateApptDate { get; set; }
+        public string REFT_Owner { get; set; }
+        public string REFT_CodeTableTags { get; set; }
+        public int REFT_Subregion_DR { get; set; }
 
         //Calculated Zone
         public decimal CommissionAmount { get; set; }

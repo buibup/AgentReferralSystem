@@ -14,6 +14,7 @@ namespace AgentReferralSystem.Api.Data.Models.SqlServer
         public string Agent_Name { get; set; }
         public string Patient_Name { get; set; }
         public string Patient_Desc { get; set; }
+        public string PatientId { get; set; }
         public string HN_Number { get; set; }
         public string Episode_Number { get; set; }
         public DateTime Episode_Date { get; set; }

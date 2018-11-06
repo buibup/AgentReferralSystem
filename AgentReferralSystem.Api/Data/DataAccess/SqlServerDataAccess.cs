@@ -2,6 +2,7 @@
 using AgentReferralSystem.Api.Data.DataAccess.Interfaces;
 using AgentReferralSystem.Api.Data.Models;
 using AgentReferralSystem.Api.Data.Models.SqlServer;
+using AgentReferralSystem.Api.Data.Query;
 using Dapper;
 using System;
 using System.Collections.Generic;
@@ -32,13 +33,20 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                     agentParam.Add("@AgentId", agent.AgentId);
                     agentParam.Add("@AgentCode", agent.AgentCode);
                     agentParam.Add("@AgentDesc", agent.AgentDesc);
+                    agentParam.Add("@Address", agent.Address);
+                    agentParam.Add("@Email", agent.Email);
+                    agentParam.Add("@BankAccount", agent.BankAccount);
+                    agentParam.Add("@DisplayImage", agent.DisplayImage);
                     agentParam.Add("@AgreementDate", agent.AgreementDate);
-                    agentParam.Add("@DateFrom", agent.StartDate);
-                    agentParam.Add("@DateTo", agent.EndDate);
+                    agentParam.Add("@DateFrom", agent.DateFrom);
+                    agentParam.Add("@DateTo", agent.DateTo);
                     agentParam.Add("@Remark", agent.Remark ?? "");
+                    agentParam.Add("@CurrentSale", agent.CurrentSale);
                     agentParam.Add("@CurrentReward", agent.CurrentReward);
                     agentParam.Add("@TotalReward", agent.TotalReward);
                     agentParam.Add("@CreateDate", agent.CreateDate);
+                    agentParam.Add("@LastModifyDate", DateTime.Now);
+                    agentParam.Add("@isDelete", agent.isDelete);
 
                     await conn.ExecuteAsync("SaveAgent", agentParam, transaction: tran , commandType: CommandType.StoredProcedure);
 
@@ -94,7 +102,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                 conn.Open();
                 try
                 {
-                    var query = "select * from dbo.Agent";
+                    var query = "select * from dbo.Agent where isNull(isDelete,0) = 0";
                     var data = (await conn.QueryAsync<Agent>(query));
                     return data;
                 }
@@ -110,16 +118,16 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
-        public async Task<AgentOutput> GetAgentByIdAsync(int agentId)
+        public async Task<Agent> GetAgentByIdAsync(int agentId)
         {
-            var agent = new AgentOutput();
+            var agent = new Agent();
 
             using(var conn = new SqlConnection(_connectionStrings.SqlServer))
             {
                 var p = new DynamicParameters();
                 p.Add("@AgentId", agentId);
 
-                agent = (await conn.QueryAsync<AgentOutput>("GetAgentById", p, commandType: CommandType.StoredProcedure)).ToList().FirstOrDefault();
+                agent = (await conn.QueryAsync<Agent>("GetAgentById", p, commandType: CommandType.StoredProcedure)).ToList().FirstOrDefault();
 
                 if(agent != null)
                 {
@@ -154,7 +162,59 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
-        public async Task<IEnumerable<CommissionItem>> GetCommissionItemById(int agentId)
+        public async Task<IEnumerable<CommissionItem>> GetItemList()
+        {
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                conn.Open();
+                try
+                {
+
+                    var data = (await conn.QueryAsync<CommissionItem>
+                        ("select * from dbo.CommissionItem where isNull(isDelete , 0) = 0", commandType: CommandType.Text));
+                    return data;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+
+            }
+        }
+
+        public async Task<IEnumerable<int>> GetCustomerByAgentId(int AgentId)
+        {
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                conn.Open();
+                try
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@AgentId", AgentId);
+
+                    var data = (await conn.QueryAsync<int>
+                        ("GetCustomerInCommissionItemByAgentId", p, commandType: CommandType.StoredProcedure));
+                    return data;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+
+            }
+        }
+
+        public async Task<IEnumerable<CommissionItem>> GetCommissionItemById(int? agentId = null, int? PatientId = null)
         {
             using (var conn = new SqlConnection(_connectionStrings.SqlServer))
             {
@@ -163,6 +223,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                 {
                     var p = new DynamicParameters();
                     p.Add("@Agent_Id", agentId);
+                    p.Add("@PatientId", PatientId);
 
                     var data = (await conn.QueryAsync<CommissionItem>
                         ("GetCommissionItemById", p, commandType: CommandType.StoredProcedure));
@@ -194,6 +255,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                     p.Add("@Agent_Id", item.Agent_Id);
                     p.Add("@Agent_Code", item.Agent_Code);
                     p.Add("@Agent_Name", item.Agent_Name);
+                    p.Add("@PatientId", item.PatientId);
                     p.Add("@HN_Number", item.HN_Number);
                     p.Add("@Patient_Name", item.Patient_Name);
                     p.Add("@Patient_Desc", item.Patient_Desc);
@@ -279,7 +341,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                 conn.Open();
                 try
                 {
-                    string sql = @"select * from dbo.RewardItem";
+                    string sql = @"select * from dbo.RewardItem where isNull(isDelete,0) = 0";
                     data = await conn.QueryAsync<RewardItem>(sql,commandType: CommandType.Text);
                 }
                 catch (Exception ex)
@@ -293,6 +355,152 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                 }
             }
             return data;
+        }
+
+        public async Task<IEnumerable<RewardItemHistory>> GetRewardHistoryList()
+        {
+            var init = new List<RewardItemHistory>();
+            var data = init.AsEnumerable<RewardItemHistory>();
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                conn.Open();
+                try
+                {
+                    string sql = @"select * from dbo.RewardHistory where isNull(isDelete,0) = 0";
+                    data = await conn.QueryAsync<RewardItemHistory>(sql, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
+            return data;
+        }
+
+        public async Task<IEnumerable<RewardExchange>> GetRewardExchangeList(int? AgentId)
+        {
+            var init = new List<RewardExchange>();
+            var data = init.AsEnumerable<RewardExchange>();
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                conn.Open();
+                try
+                {
+                    string sql = "";
+                    if (AgentId == null) sql = @"select * from dbo.RewardExchange where isNull(isDelete,0) = 0";
+                    else sql = string.Format(@"select * from dbo.RewardExchange where isNull(isDelete,0) = 0 and AgentId = '{0}'", AgentId);
+                    data = await conn.QueryAsync<RewardExchange>(sql, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Dispose();
+                    conn.Close();
+                }
+            }
+            return data;
+        }
+
+        public async Task<ScheduleMonthLog> GetScheduleMonthLog()
+        {
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                var data = new ScheduleMonthLog();
+                try
+                {
+                    data = (await conn.QueryAsync<ScheduleMonthLog>("select * From dbo.ScheduleMonthLog order by CreateDate DESC", commandType: CommandType.Text)).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Dispose();
+                    conn.Close();
+                }
+                return data;
+            }
+            
+        }
+
+        public async Task InsertScheduleMonthLog(ScheduleMonthLog Log)
+        {
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                conn.Open();
+                IDbTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@ProcessLog", Log.ProcessLog);
+                    p.Add("@Remark", Log.Remark);
+                    p.Add("@ScheduleMonthReward", Log.ScheduleMonthReward);
+                    p.Add("@ScheduleMonthCommission", Log.ScheduleMonthCommission);
+                    p.Add("@CreateDate", DateTime.Now);
+                    await conn.ExecuteAsync("InsertScheduleMonthLog", p, tran, commandType: CommandType.StoredProcedure);
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+                finally
+                {
+                    tran.Dispose();
+                    conn.Close();
+                    conn.Dispose();
+                }
+            }
+        }
+
+        #region OverrideMethod GetConfigByCriteria
+        public async Task<IEnumerable<PercentConfig>> GetConfigByCriteria(string ConfigType, string ConfigName)
+        {
+            List<string> Criteria = new List<string>();
+            Criteria.Add(ConfigType);
+            Criteria.Add(ConfigName);
+            return await GetConfigByCriteria(Criteria, 1);
+        }
+        public async Task<IEnumerable<PercentConfig>> GetConfigByCriteria(string ConfigType)
+        { 
+            List<string> Criteria = new List<string>();
+            Criteria.Add(ConfigType);
+            return await GetConfigByCriteria(Criteria, 2);
+        }
+        #endregion
+        private async Task<IEnumerable<PercentConfig>> GetConfigByCriteria(List<string> Criteria, int CriteriaType)
+        {
+            using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+            {
+                try
+                {
+                    //Type 1 (No Config/If else yet)
+                    string ConfigType = Criteria[0];
+                    string ConfigName = "";
+                    if (Criteria.Count > 1) ConfigName = Criteria[1] ?? null;
+                    string sql = SqlServerQuery.GetPercentConfigSQLString(CriteriaType, Criteria);
+                    return await conn.QueryAsync<PercentConfig>(sql, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Dispose();
+                    conn.Close();
+                }
+            }
         }
     }
 }

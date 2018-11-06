@@ -48,5 +48,13 @@ namespace AgentReferralSystem.Api.Data.Calculate
             }
             #endregion
         }
+
+        public static decimal GetItemValue(ARPatientBill Bill)
+        {
+            if (Bill.ITM_LineTotal >= 0) return Bill.ITM_LineTotal;
+            else return 0;
+            //else if (Bill.ITM_LineTotal < 0 && Bill.ITM_LocalGovtShare > 0) return Bill.ITM_LineTotal;
+
+        }
     }
 }

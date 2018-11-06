@@ -9,6 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace AgentReferralSystem.Api.Data.Services
 {
@@ -462,7 +465,7 @@ namespace AgentReferralSystem.Api.Data.Services
         public static List<AgentReportViewModel> ProcessCommission(this AgentOutput agent,
             IEnumerable<ARPatientBill> patientBills,
             IEnumerable<CommissionItem> BillList,
-            List<PercentConfig> ConfigList,
+            List<PercentConfig> ConfigList, 
             int Year,int Month)
         {
             // Get UnRegisPatientBill
@@ -523,6 +526,54 @@ namespace AgentReferralSystem.Api.Data.Services
             return result;
         }
 
+        #endregion
+
+        #region newFunction
+
+        public static void ProcessMonthlyReward(List<AgentOverviewModel> AgentModelList, PercentConfig PC)
+        {
+            foreach(AgentOverviewModel AgentModel in AgentModelList)
+            {
+                //Get all Item from agent
+                Agent agent = AgentModel.agent;
+                List<CommissionItem> ItemList = AgentModel.saleList;
+                decimal sumSaleAmount = 0;
+                //Sum All Price
+                foreach(CommissionItem item in ItemList)
+                {
+                    sumSaleAmount += item.Item_Total;
+                }
+                //Calculate Reward
+                int TotalReward = 0;
+                if (PC.value2Meaning.ToLower() == "percent") TotalReward = (int)decimal.Multiply(sumSaleAmount, decimal.Divide(PC.value1, 100));
+                else TotalReward = (int)decimal.Divide(sumSaleAmount, PC.value1);
+                //Insert to DB
+                agent.CurrentReward += TotalReward;
+                agent.TotalReward += TotalReward;
+            }
+        }
+
+        public static void SaveImage(Agent agent, string ImageData)
+        {
+            //var filePath = "C:\\Users\\Kantinun\\Desktop\\AgentReferralSystem\\AgentReferralSystem.Api\\bin\\Release\\netcoreapp2.1\\publish\\wwwroot\\";
+            var filePath = "C:\\inetpub\\wwwroot\\AgentReferralSystem\\publish\\wwwroot\\";
+
+            try
+            {
+                if (System.IO.File.Exists(filePath + agent.DisplayImage))
+                    System.IO.File.Delete(filePath + agent.DisplayImage);
+                byte[] bytes = Convert.FromBase64String(ImageData);
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    Image image = Image.FromStream(ms);
+                    image.Save(filePath + agent.DisplayImage, ImageFormat.Jpeg);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
     }
