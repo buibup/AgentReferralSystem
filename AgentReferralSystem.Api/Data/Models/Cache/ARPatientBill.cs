@@ -7,10 +7,10 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
 {
     public class ARPatientBill
     {
-        public int ARPBL_RowId { get; set; }
-        public int ARPBL_PAADM_DR { get; set; }
-        public int PAADM_PAPMI_DR { get; set; }
-        public int PAPMI_RowId { get; set; }
+        public string ARPBL_RowId { get; set; }
+        public string ARPBL_PAADM_DR { get; set; }
+        public string PAADM_PAPMI_DR { get; set; }
+        public string PAPMI_RowId { get; set; }
         public string PAPMI_ID { get; set; }
         public string PAPMI_No { get; set; }
         public string PAPMI_Name { get; set; }
@@ -53,10 +53,10 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
         public int REFT_RowId { get; set; }
         public string REFT_Code { get; set; }
         public string REFT_Desc { get; set; }
-        public DateTime REFT_DateFrom { get; set; }
-        public DateTime REFT_DateTo { get; set; }
+        public DateTime? REFT_DateFrom { get; set; }
+        public DateTime? REFT_DateTo { get; set; }
         public string REFT_NationalCode { get; set; }
-        public DateTime REFT_RefStDateApptDate { get; set; }
+        public string REFT_RefStDateApptDate { get; set; }
         public string REFT_Owner { get; set; }
         public string REFT_CodeTableTags { get; set; }
         public int REFT_Subregion_DR { get; set; }

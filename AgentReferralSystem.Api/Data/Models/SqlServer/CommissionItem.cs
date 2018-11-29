@@ -8,7 +8,7 @@ namespace AgentReferralSystem.Api.Data.Models.SqlServer
     public class CommissionItem
     {
         public int Id { get; set; }
-        public int ARPBL_RowId { get; set; }
+        public string ARPBL_RowId { get; set; }
         public int Agent_Id { get; set; }
         public string Agent_Code { get; set; }
         public string Agent_Name { get; set; }

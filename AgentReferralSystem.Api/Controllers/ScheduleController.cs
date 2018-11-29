@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.IO;
 using AgentReferralSystem.Api.Data.Models.SqlServer;
 using AgentReferralSystem.Api.Data.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -58,7 +61,7 @@ namespace AgentReferralSystem.Api.Controllers
                 throw ex;
             }
         }
-
+            
         //Schedule MonthyCommission
         [HttpPost("MonthyCommission")]
         public async Task<IActionResult> MonthyCommission()
@@ -109,15 +112,76 @@ namespace AgentReferralSystem.Api.Controllers
         [HttpPost("TryWriteTextFile")]
         public async Task<IActionResult> TryWriteTextFile([FromHeader]string Code)
         {
-            if(Code == "89TLTest")
+            try
             {
-                var result = await _scheduleService.TestLog();
+                if (Code == "89TLTest")
+                {
+                    var result = await _scheduleService.TestLog();
 
-                return Ok();
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound();
+                throw ex;
+            }
+        }
+
+        //Testing Write Excel File
+        [HttpPost("TryWriteExcelFile")]
+        public async Task<IActionResult> TryWriteExcelFile([FromHeader]string code)
+        {
+            try
+            {
+                if (code == "89ELTest")
+                {
+                    string url = await _scheduleService.TestExcel();
+
+                    var memory = new MemoryStream();
+
+                    using (var stream = new FileStream("wwwroot\\Excel\\" + url, FileMode.Open))
+                    {                      
+                        await stream.CopyToAsync(memory);
+
+                        stream.Close();
+                        stream.Dispose();
+                    }
+                    memory.Position = 0;
+                    return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", url);
+                }
+                else return NotFound();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet("TryGetWriteExcelFile")]
+        public async Task<IActionResult> TryWriteExcelFile()
+        {
+            try
+            {
+                string url = await _scheduleService.TestExcel();
+
+                var memory = new MemoryStream();
+
+                using (var stream = new FileStream("wwwroot\\Excel\\" + url, FileMode.Open))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+                memory.Position = 0;
+                return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", url);
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

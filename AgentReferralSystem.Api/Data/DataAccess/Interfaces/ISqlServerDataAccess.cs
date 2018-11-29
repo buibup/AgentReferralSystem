@@ -11,10 +11,11 @@ namespace AgentReferralSystem.Api.Data.DataAccess.Interfaces
     {
         Task<IEnumerable<Agent>> GetAgentList();
         Task<Agent> GetAgentByIdAsync(int agentId);
+        Task<Agent> GetAgentByAgentCodeAsync(string agentCode);
         Task<IEnumerable<SaleType>> GetSaleTypes();
         Task<IEnumerable<CommissionItem>> GetItemList();
-        Task<IEnumerable<int>> GetCustomerByAgentId(int AgentId);
-        Task<IEnumerable<CommissionItem>> GetCommissionItemById(int? agentId = null, int? PatientId = null);
+        Task<IEnumerable<string>> GetCustomerByAgentId(int AgentId);
+        Task<IEnumerable<CommissionItem>> GetCommissionItemById(int? agentId = null, string PatientId = null);
         Task SaveCommissionItem(CommissionItem item);
         Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);

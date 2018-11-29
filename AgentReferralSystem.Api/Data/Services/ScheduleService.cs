@@ -11,6 +11,8 @@ using EPPlus.Core.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using OfficeOpenXml;
 using System;
+using System.IO;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,25 +25,34 @@ namespace AgentReferralSystem.Api.Data.Services
         private readonly ISqlServerDataAccess _sqlServerDataAccess;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly LogFilePath _logPath;
-        private readonly LogFileName _logFileName;
+        private readonly LogFileName _logFileName;  
+        private readonly ExcelFilePath _excelPath;
+        private readonly ExcelFileName _excelFileName;
+        private readonly ExcelHeader _excelHeader;
         public ScheduleService(ICacheDataAccess cacheDataAccess,
             ISqlServerDataAccess sqlServerDataAccess,
             IHostingEnvironment hostingEnvironment,
             LogFilePath logPath,
-            LogFileName logFileName)
+            LogFileName logFileName,
+            ExcelFilePath excelPath,
+            ExcelFileName excelFileName,
+            ExcelHeader excelHeader)
         {
             _logPath = logPath;
             _logFileName = logFileName;
+            _excelPath = excelPath;
+            _excelFileName = excelFileName;
+            _excelHeader = excelHeader;
             _cacheDataAccess = cacheDataAccess;
             _sqlServerDataAccess = sqlServerDataAccess;
             _hostingEnvironment = hostingEnvironment;
         }
-        public async Task ScheduleMonthlyReward() 
+        public async Task ScheduleMonthlyReward()
         {
             //using (System.IO.StreamWriter file = new System.IO.StreamWriter(_logPath.Prod + DateTime.Now.ToString() + "MonthlyRewardLog.txt"))
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(_logPath.Test + DateTime.Now.ToString() + "MonthlyRewardLog.txt"))
             {
-                try  
+                try
                 {
                     int processMonth = 0;
                     int processYear = 0;
@@ -63,7 +74,7 @@ namespace AgentReferralSystem.Api.Data.Services
                     }
 
                     //Get RewardConfig
-                    PercentConfig PC = (await _sqlServerDataAccess.GetConfigByCriteria("RewardConfig")).First() ;
+                    PercentConfig PC = (await _sqlServerDataAccess.GetConfigByCriteria("RewardConfig")).First();
                     if (PC != null)
                     {
                         try
@@ -89,7 +100,7 @@ namespace AgentReferralSystem.Api.Data.Services
                         await _sqlServerDataAccess.InsertScheduleMonthLog(DBLog);
                         file.WriteLine("Update ScheduleLog Success");
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         file.WriteLine("Update ScheduleLog Fail");
                         file.WriteLine("Message : " + ex.Message);
@@ -134,10 +145,11 @@ namespace AgentReferralSystem.Api.Data.Services
                 foreach (Agent agent in AgentList)
                 {
                     //Get BillList for agent
-                    var patientsBills = (await _cacheDataAccess.GetARPatientsBillsByReferralTypeRowIdAsync(agent.AgentId)).ToList();
+                    var patientsBills = (await _cacheDataAccess.GetARPatientsBillsByREFT_Code(agent.AgentCode)).ToList();
                     var dbBills = (await _sqlServerDataAccess.GetCommissionItemById(agent.AgentId)).ToList();
                     var insertBills = patientsBills.Where(x => !dbBills.Any(y => y.ARPBL_RowId == x.ARPBL_RowId)).ToList();
-                    ProcessMigrateCommission(agent, insertBills);
+
+                    if (insertBills.Count > 0) await ProcessMigrateCommission(agent, insertBills);
 
                     await _sqlServerDataAccess.AddOrUpdateAgentAsync(agent);
                 }
@@ -159,27 +171,34 @@ namespace AgentReferralSystem.Api.Data.Services
 
         }
 
-        private async void calculateDiaryCommissionByItemList(Agent agent, List<CommissionItem> billList)
+        private async Task calculateDiaryCommissionByItemList(Agent agent, List<CommissionItem> billList)
         {
-            var _agent = agent;
-            List<PercentConfig> configList = (await _sqlServerDataAccess.GetConfigByCriteria("GlobalCommissionRate")).ToList();
-            PercentConfig currentConfig = configList.Where(x => decimal.Parse((x.value2 ?? "0")) >= agent.DisplayCommission).FirstOrDefault();
-            if (currentConfig == null) currentConfig = configList.Last();
-            decimal totalIncome = billList.Sum(x => x.Item_Total);
-            _agent.CurrentSale = decimal.Add(_agent.CurrentSale,totalIncome);
-            PercentConfig newConfig = configList.Where(x => decimal.Parse((x.value2 ?? "0")) >= agent.CurrentSale).FirstOrDefault();
-            if (newConfig == null) newConfig = configList.Last();
-            if (currentConfig.id != newConfig.id)
+            try
             {
-                //var 
-                foreach(CommissionItem bill in billList)
+                var _agent = agent;
+                List<PercentConfig> configList = (await _sqlServerDataAccess.GetConfigByCriteria("GlobalCommissionRate")).ToList();
+                PercentConfig currentConfig = configList.Where(x => decimal.Parse((x.value2 ?? "0")) >= agent.DisplayCommission).FirstOrDefault();
+                if (currentConfig == null) currentConfig = configList.Last();
+                decimal totalIncome = billList.Sum(x => x.Item_Total);
+                _agent.CurrentSale = decimal.Add(_agent.CurrentSale, totalIncome);
+                PercentConfig newConfig = configList.Where(x => decimal.Parse((x.value2 ?? "0")) >= agent.CurrentSale).FirstOrDefault();
+                if (newConfig == null) newConfig = configList.Last();
+                if (currentConfig.id != newConfig.id)
                 {
-                    bill.Item_Commission = decimal.Divide(decimal.Multiply(bill.Item_Total, newConfig.value1), 100);
-                    await _sqlServerDataAccess.SaveCommissionItem(bill);
+                    //var 
+                    foreach (CommissionItem bill in billList)
+                    {
+                        bill.Item_Commission = decimal.Divide(decimal.Multiply(bill.Item_Total, newConfig.value1), 100);
+                        _agent.DisplayCommission = decimal.Add(_agent.DisplayCommission, bill.Item_Commission);
+                        await _sqlServerDataAccess.SaveCommissionItem(bill);
+                    }
                 }
                 await _sqlServerDataAccess.AddOrUpdateAgentAsync(_agent);
             }
-            await _sqlServerDataAccess.AddOrUpdateAgentAsync(_agent);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         //Calculate Commission
@@ -195,7 +214,7 @@ namespace AgentReferralSystem.Api.Data.Services
         }
 
         //Migrate Commission
-        private void ProcessMigrateCommission(Agent agent, List<ARPatientBill> BillList)
+        private async Task ProcessMigrateCommission(Agent agent, List<ARPatientBill> BillList)
         {
             try
             {
@@ -225,14 +244,14 @@ namespace AgentReferralSystem.Api.Data.Services
                     itemList.Add(item);
                     try
                     {
-                        _sqlServerDataAccess.SaveCommissionItem(item);
+                        await _sqlServerDataAccess.SaveCommissionItem(item);
                     }
                     catch (Exception ex)
                     {
                         message += ex.Message;
                     }
                 }
-                calculateDiaryCommissionByItemList(agent, itemList);
+                await calculateDiaryCommissionByItemList(agent, itemList);
             }
             catch (Exception ex)
             {
@@ -245,8 +264,9 @@ namespace AgentReferralSystem.Api.Data.Services
 
         #region Testing
 
-        public async Task<List<Dictionary<string,object>>> TestLog()
+        public async Task<List<Dictionary<string, object>>> TestLog()
         {
+            //throw new Exception("test");
             List<Dictionary<string, object>> resultList = new List<Dictionary<string, object>>();
             Dictionary<string, object> TopData = new Dictionary<string, object>();
 
@@ -264,6 +284,42 @@ namespace AgentReferralSystem.Api.Data.Services
             return resultList;
         }
 
-        #endregion
+        public async Task<string> TestExcel()
+        {
+            return await GenerateExcel();
+        }
+
+        private async Task<string> GenerateExcel()
+        {
+            string path = "C:\\Users\\Kantinun\\Desktop\\AgentReferralSystem\\AgentReferralSystem.Api\\wwwroot\\Excel\\";
+            string fileName = "Excel" + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".xlsx";
+            string url = path + fileName;
+            await Task.Run(() =>
+            {
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+                    var ws1 = excel.Workbook.Worksheets.Add("Worksheet1");
+                    FileInfo excelFile = new FileInfo(url);
+
+                    var headerRow = new List<string[]>()
+                      {
+                        new string[] { "ID", "First Name", "Last Name", "DOB" }
+                      };
+
+                    // Determine the header range (e.g. A1:D1)
+                    string headerRange = "A1:" + Char.ConvertFromUtf32(headerRow[0].Length + 64) + "1";
+
+                    // Target a worksheet
+                    var worksheet = excel.Workbook.Worksheets["Worksheet1"];
+
+                    // Popular header row data
+                    worksheet.Cells[headerRange].LoadFromArrays(headerRow);
+                    excel.SaveAs(excelFile);
+                    excel.Dispose();
+                }
+            });
+            return fileName;
+            #endregion
+        }
     }
 }

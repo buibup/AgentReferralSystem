@@ -1,4 +1,6 @@
-﻿using AgentReferralSystem.Api.Data.DataAccess.Interfaces;
+﻿using AgentReferralSystem.Api.Data.Config;
+using AgentReferralSystem.Api.Data.Calculate;
+using AgentReferralSystem.Api.Data.DataAccess.Interfaces;
 using AgentReferralSystem.Api.Data.Models;
 using AgentReferralSystem.Api.Data.Models.Cache;
 using AgentReferralSystem.Api.Data.Models.SqlServer;
@@ -22,10 +24,25 @@ namespace AgentReferralSystem.Api.Data.Services
         private readonly ICacheDataAccess _cacheDataAccess;
         private readonly ISqlServerDataAccess _sqlServerDataAccess;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly LogFilePath _logPath;
+        private readonly LogFileName _logFileName;
+        private readonly ExcelFilePath _excelPath;
+        private readonly ExcelFileName _excelFileName;
+        private readonly ExcelHeader _excelHeader;
         public AgentService(ICacheDataAccess cacheDataAccess,
             ISqlServerDataAccess sqlServerDataAccess,
-            IHostingEnvironment hostingEnvironment)
+            IHostingEnvironment hostingEnvironment,
+            LogFilePath logPath,
+            LogFileName logFileName,
+            ExcelFilePath excelPath,
+            ExcelFileName excelFileName,
+            ExcelHeader excelHeader)
         {
+            _logPath = logPath;
+            _logFileName = logFileName;
+            _excelPath = excelPath;
+            _excelFileName = excelFileName;
+            _excelHeader = excelHeader;
             _cacheDataAccess = cacheDataAccess;
             _sqlServerDataAccess = sqlServerDataAccess;
             _hostingEnvironment = hostingEnvironment;
@@ -128,22 +145,11 @@ namespace AgentReferralSystem.Api.Data.Services
                 var configList = (await _sqlServerDataAccess.GetConfigByCriteria("GlobalCommissionRate")).ToList();
                 if (itemList != null && itemList.Count() > 0)
                 {
-                    var Now = DateTime.Now;
-                    var currentMonthItemList = itemList.Where(x => x.Episode_Date.Month == Now.Month && x.Episode_Date.Year == Now.Year).ToList();
-                    if(currentMonthItemList.Count > 0)  
-                    {
-                        var data = AgentCommissionViewModel.GenerateAgentComVMList(itemList, configList);
-                        result.Add("status", "OK");
-                        result.Add("Message", "");
-                        result.Add("data", data);
-                    }
-                    else
-                    {
-                        result.Add("status", "Error");
-                        result.Add("Message", "No CommissionItem In Date : " + Now.ToString());
-                        result.Add("data", new List<Dictionary<string,object>>());
 
-                    }
+                    var data = await AgentCommissionViewModel.GenerateAgentComVMList(itemList, configList);
+                    result.Add("status", "OK");
+                    result.Add("Message", "");
+                    result.Add("data", data);
                 }
                 else
                 {
@@ -167,7 +173,7 @@ namespace AgentReferralSystem.Api.Data.Services
                 var dataList = new List<AgentCustomerViewModel>();
                 if (customerList != null && customerList.Count() > 0)
                 {
-                    foreach (int customerId in customerList)
+                    foreach (string customerId in customerList)
                     {
                         var ItemList = (await _sqlServerDataAccess.GetCommissionItemById(agentId, customerId)).ToList();
                         AgentCustomerViewModel item = new AgentCustomerViewModel(ItemList);
@@ -194,6 +200,19 @@ namespace AgentReferralSystem.Api.Data.Services
         {
             var model = await _sqlServerDataAccess.GetAgentByIdAsync(agentId);
             return model;
+        }
+
+        public async Task<Agent> GetAgentByAgentCodeAsync(string agentCode)
+        {
+            try
+            {
+                var agent = await _sqlServerDataAccess.GetAgentByAgentCodeAsync(agentCode);
+                return agent;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task UploadAgentImage(int agentId, string ImageData)
@@ -423,5 +442,23 @@ namespace AgentReferralSystem.Api.Data.Services
             return result;
         }
 
+        public async Task<Dictionary<string, object>> GenerateAgentExcel()
+        {
+            try
+            {
+                var result = new Dictionary<string, object>();
+                //var excelPath = _excelPath.Release;
+                var excelPath = _excelPath.Test;
+                var excelName = _excelFileName.AgentSummaryExcel;
+                var excelHeader = _excelHeader.AgentSummaryExcel;
+                var agent = await _sqlServerDataAccess.GetAgentList();
+                //ExcelViewModel.GenerateExcel();   
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

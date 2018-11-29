@@ -16,7 +16,7 @@ namespace AgentReferralSystem.Api.Data.Calculate
         {
 
             #region calc bwc service
-            if (memberPapmiDrList.Any(m => item.PAADM_PAPMI_DR == m)) // member
+            if (memberPapmiDrList.Any(m => item.PAADM_PAPMI_DR == m.ToString())) // member
             {
                 if (itemCompoundingList.Any(i => i.ARCIM_RowId == item.ARCIM_RowId)) // compounding 
                 {

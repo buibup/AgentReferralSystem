@@ -18,6 +18,7 @@
   <ItemGroup>
     <Folder Include="Data\Export\" />
     <Folder Include="wwwroot\Log\" />
+    <Folder Include="wwwroot\Excel\" />
   </ItemGroup>
 
   <ItemGroup>

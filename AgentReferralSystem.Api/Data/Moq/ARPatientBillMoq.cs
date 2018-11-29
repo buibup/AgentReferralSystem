@@ -12,9 +12,9 @@ namespace AgentReferralSystem.Api.Data.Moq
         {
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-08-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -45,9 +45,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-08-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -78,9 +78,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-08-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -111,9 +111,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                 PAADM_PAPMI_DR = 302,
+                 PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-08-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -144,9 +144,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-08-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -178,9 +178,9 @@ namespace AgentReferralSystem.Api.Data.Moq
 
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-07-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -211,9 +211,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-07-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -244,9 +244,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-07-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -277,9 +277,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                 PAADM_PAPMI_DR = 302,
+                 PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-07-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -310,9 +310,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-07-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -344,9 +344,9 @@ namespace AgentReferralSystem.Api.Data.Moq
 
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-06-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -377,9 +377,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-06-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -410,9 +410,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-06-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -443,9 +443,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                 PAADM_PAPMI_DR = 302,
+                 PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-06-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -476,9 +476,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-06-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -510,9 +510,9 @@ namespace AgentReferralSystem.Api.Data.Moq
 
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-01-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -543,9 +543,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-01-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -576,9 +576,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-01-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -609,9 +609,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                 PAADM_PAPMI_DR = 302,
+                 PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-01-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -642,9 +642,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-01-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -676,9 +676,9 @@ namespace AgentReferralSystem.Api.Data.Moq
 
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-03-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -709,9 +709,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-03-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -742,9 +742,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-03-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -775,9 +775,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                 PAADM_PAPMI_DR = 302,
+                 PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-03-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -808,9 +808,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-03-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -842,9 +842,9 @@ namespace AgentReferralSystem.Api.Data.Moq
 
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-12-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -875,9 +875,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-12-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -908,9 +908,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-12-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -941,9 +941,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                 PAADM_PAPMI_DR = 302,
+                 PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-12-20","yyyy-MM-dd", null),
                 DischargeDate = null,
@@ -974,9 +974,9 @@ namespace AgentReferralSystem.Api.Data.Moq
             },
             new ARPatientBill()
             {
-                PAADM_PAPMI_DR = 302,
+                PAADM_PAPMI_DR = "302",
                 PAPMI_No = "81-17-000302",
-                ARPBL_PAADM_DR = 4352,
+                ARPBL_PAADM_DR = "4352",
                 EpisodeNo = "O81-18-003557",
                 EpisodeDate = DateTime.ParseExact("2018-12-20","yyyy-MM-dd", null),
                 DischargeDate = null,

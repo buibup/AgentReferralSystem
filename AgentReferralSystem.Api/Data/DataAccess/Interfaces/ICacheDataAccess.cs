@@ -10,9 +10,10 @@ namespace AgentReferralSystem.Api.Data.DataAccess.Interfaces
     {
         Task<PACReferralType> GetPACReferralTypeByIdAsync(int agentId);
         Task<IEnumerable<PACReferralType>> GetPACReferralTypeAllAsync(string search);
+        Task<IEnumerable<ARPatientBill>> GetARPatientsBillsByREFT_Code(string REFT_Code);
         Task<IEnumerable<ARPatientBill>> GetARPatientsBillsByReferralTypeRowIdAsync(int rowId);
         Task<IEnumerable<ARCItmMast>> GetARCItmMastCompoundingAsync();
         Task<QBWCMEMBERS> GetQBWCMEMBERSByPapmiRowIdAsync(int papmiRowId);
-        Task<IEnumerable<QBWCMEMBERS>> GetQBWCMEMBERSByPapmiRowIdListAsync(IEnumerable<int> papmiRowIdList);
+        Task<IEnumerable<QBWCMEMBERS>> GetQBWCMEMBERSByPapmiRowIdListAsync(IEnumerable<string> papmiRowIdList);
     }
 }

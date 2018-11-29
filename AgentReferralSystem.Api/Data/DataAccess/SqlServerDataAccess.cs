@@ -41,6 +41,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                     agentParam.Add("@DateFrom", agent.DateFrom);
                     agentParam.Add("@DateTo", agent.DateTo);
                     agentParam.Add("@Remark", agent.Remark ?? "");
+                    agentParam.Add("@DisplayCommission", agent.DisplayCommission);
                     agentParam.Add("@CurrentSale", agent.CurrentSale);
                     agentParam.Add("@CurrentReward", agent.CurrentReward);
                     agentParam.Add("@TotalReward", agent.TotalReward);
@@ -139,6 +140,27 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             return agent;
         }
 
+        public async Task<Agent> GetAgentByAgentCodeAsync(string agentCode)
+        {
+            try
+            {
+                var agent = new Agent();
+
+                using (var conn = new SqlConnection(_connectionStrings.SqlServer))
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@AgentCode", agentCode);
+
+                    agent = (await conn.QueryAsync<Agent>("GetAgentByAgentCode", p, commandType: CommandType.StoredProcedure)).ToList().FirstOrDefault();
+                }
+                return agent;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<IEnumerable<SaleType>> GetSaleTypes()
         {
             using (var conn = new SqlConnection(_connectionStrings.SqlServer))
@@ -187,7 +209,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
-        public async Task<IEnumerable<int>> GetCustomerByAgentId(int AgentId)
+        public async Task<IEnumerable<string>> GetCustomerByAgentId(int AgentId)
         {
             using (var conn = new SqlConnection(_connectionStrings.SqlServer))
             {
@@ -197,7 +219,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                     var p = new DynamicParameters();
                     p.Add("@AgentId", AgentId);
 
-                    var data = (await conn.QueryAsync<int>
+                    var data = (await conn.QueryAsync<string>
                         ("GetCustomerInCommissionItemByAgentId", p, commandType: CommandType.StoredProcedure));
                     return data;
                 }
@@ -214,7 +236,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
-        public async Task<IEnumerable<CommissionItem>> GetCommissionItemById(int? agentId = null, int? PatientId = null)
+        public async Task<IEnumerable<CommissionItem>> GetCommissionItemById(int? agentId = null, string PatientId = null)
         {
             using (var conn = new SqlConnection(_connectionStrings.SqlServer))
             {
@@ -251,6 +273,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                 try
                 {
                     var p = new DynamicParameters();
+                    p.Add(@"Id", item.Id);
                     p.Add("@ARPBL_RowId", item.ARPBL_RowId);
                     p.Add("@Agent_Id", item.Agent_Id);
                     p.Add("@Agent_Code", item.Agent_Code);

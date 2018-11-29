@@ -152,6 +152,23 @@ namespace AgentReferralSystem.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetAgentByAgentCode/{agentId}")]
+        public async Task<IActionResult> GetAgentByAgentCodeAsync(string agentCode)
+        {
+            try
+            {
+                var agent = await _agentService.GetAgentByAgentCodeAsync(agentCode);
+
+                if (agent == null) return NotFound();
+
+                return Ok(agent);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { status = "ERROR", message = "Exception Thrown: " + ex.Message });
+            }
+        }
+
         [HttpGet("GetSaleTypes")]
         public async Task<IActionResult> GetSaleTypes()
         {
@@ -206,5 +223,18 @@ namespace AgentReferralSystem.Api.Controllers
             }
         }
 
+        [HttpGet("DownloadAgentExcel")]
+        public async Task<IActionResult> DownloadAgentExcel()
+        {
+            try
+            {
+                var result = await _agentService.GenerateAgentExcel();
+                return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { status = "ERROR", message = "Exception Thrown: " + ex.Message });
+            }
+        }
     }
 }

@@ -15,5 +15,6 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
         Task MigrateCommissionItem();
         Task RecalDiaryCommission();
         Task<List<Dictionary<string, object>>> TestLog();
+        Task<string> TestExcel();
     }
 }

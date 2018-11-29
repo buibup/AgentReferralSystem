@@ -45,6 +45,18 @@ namespace AgentReferralSystem.Api
             Configuration.Bind("LogFileName", logfileNameConfig);
             services.AddSingleton(logfileNameConfig);
 
+            var excelfilePathConfig = new ExcelFilePath();
+            Configuration.Bind("ExcelFilePath", excelfilePathConfig);
+            services.AddSingleton(excelfilePathConfig);
+
+            var excelfileNameConfig = new ExcelFileName();
+            Configuration.Bind("ExcelFileName", excelfileNameConfig);
+            services.AddSingleton(excelfileNameConfig);
+
+            var excelheaderConfig = new ExcelHeader();
+            Configuration.Bind("ExcelHeader", excelheaderConfig);
+            services.AddSingleton(excelheaderConfig);
+
             services.AddTransient<ICacheDataAccess, CacheDataAccess>();
             services.AddTransient<ISqlServerDataAccess, SqlServerDataAccess>();
 
@@ -93,6 +105,20 @@ namespace AgentReferralSystem.Api
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")),
                 RequestPath = "/Images"
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "excel")),
+                RequestPath = "/Excel"
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "excel")),
+                RequestPath = "/Excel"
             });
         }
     }

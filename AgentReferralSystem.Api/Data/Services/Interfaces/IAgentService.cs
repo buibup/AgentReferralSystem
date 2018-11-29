@@ -21,6 +21,7 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
         Task<PACReferralType> GetPACReferralTypesByIdAsync(int agentId);
         Task<IEnumerable<PACReferralType>> GetPACReferralTypesAsync(string search);
         Task<Agent> GetAgentByIdAsync(int agentId);
+        Task<Agent> GetAgentByAgentCodeAsync(string agentCode);
         Task<IEnumerable<SaleType>> GetSaleTypes();
         Task AddOrUpdateAgentAsync(Agent agent);
         Task DeleteAgentAsync(int agentId);
@@ -30,5 +31,7 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
         Task<IEnumerable<CommissionItem>> getItemlist();
 
         Task UploadAgentImage(int agentId, string imageData);
+
+        Task<Dictionary<string, object>> GenerateAgentExcel();
     }
 }

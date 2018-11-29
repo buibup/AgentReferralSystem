@@ -43,7 +43,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             {
                 using(var conn = new OdbcConnection(_connectionStrings.Cache))
                 {
-                    var data = await conn.QueryAsync<ARPatientBill>(CacheQuery.GetARPatientsBillsByReferralTypeRowId(), new { REFT_RowId = reftRowId });
+                    var data = await conn.QueryAsync<ARPatientBill>(CacheQuery.GetARPatientsBillsByReferralTypeRowId(), new { reftRowId = reftRowId });
 
                     return data;
                 }
@@ -52,6 +52,25 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             {
 
                 throw;
+            }
+        }
+
+
+        public async Task<IEnumerable<ARPatientBill>> GetARPatientsBillsByREFT_Code(string REFT_Code)
+        {
+            try
+            {
+                using (var conn = new OdbcConnection(_connectionStrings.Cache))
+                {
+                    var data = await conn.QueryAsync<ARPatientBill>(CacheQuery.GetARPatientsBillsByREFT_Code(REFT_Code));
+
+                    return data;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
 
@@ -111,7 +130,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
-        public async Task<IEnumerable<QBWCMEMBERS>> GetQBWCMEMBERSByPapmiRowIdListAsync(IEnumerable<int> papmiRowIdList)
+        public async Task<IEnumerable<QBWCMEMBERS>> GetQBWCMEMBERSByPapmiRowIdListAsync(IEnumerable<string> papmiRowIdList)
         {
             try
             {
