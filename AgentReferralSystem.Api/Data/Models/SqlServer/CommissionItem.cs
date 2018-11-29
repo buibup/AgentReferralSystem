@@ -18,6 +18,7 @@ namespace AgentReferralSystem.Api.Data.Models.SqlServer
         public string HN_Number { get; set; }
         public string Episode_Number { get; set; }
         public DateTime Episode_Date { get; set; }
+        public string Episode_Time { get; set; }
         public string Doctor_Code { get; set; }
         public string Doctor_Name { get; set; }
         public DateTime? Discharge_Date { get; set; }

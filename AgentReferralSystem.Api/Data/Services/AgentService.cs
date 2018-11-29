@@ -72,7 +72,7 @@ namespace AgentReferralSystem.Api.Data.Services
             return result;
         }
 
-        public async Task<Dictionary<string,object>> GetAgentProfile(int agentId)
+        public async Task<Dictionary<string, object>> GetAgentProfileByAgentId(int agentId)
         {
             try
             {
@@ -99,7 +99,20 @@ namespace AgentReferralSystem.Api.Data.Services
             }
         }
 
-        public async Task<Dictionary<string, object>> GetAgentCustomer(int agentId)
+        public async Task<Dictionary<string, object>> GetAgentProfileByAgentCode(string agentCode)
+        {
+            try
+            {
+                Agent agent = await _sqlServerDataAccess.GetAgentByAgentCodeAsync(agentCode);
+                return await GetAgentProfileByAgentId(agent.AgentId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Dictionary<string, object>> GetAgentCustomerByAgentId(int agentId)
         {
             try
             {
@@ -136,7 +149,20 @@ namespace AgentReferralSystem.Api.Data.Services
             }
         }
 
-        public async Task<Dictionary<string, object>> GetAgentCommission(int agentId)
+        public async Task<Dictionary<string, object>> GetAgentCustomerByAgentCode(string agentCode)
+        {
+            try
+            {
+                Agent agent = await _sqlServerDataAccess.GetAgentByAgentCodeAsync(agentCode);
+                return await GetAgentCustomerByAgentId(agent.AgentId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Dictionary<string, object>> GetAgentCommissionByAgentId(int agentId)
         {
             try
             {
@@ -164,7 +190,20 @@ namespace AgentReferralSystem.Api.Data.Services
             }
         }
 
-        public async Task<Dictionary<string,object>> GetAgentTarget(int agentId)
+        public async Task<Dictionary<string, object>> GetAgentCommissionByAgentCode(string agentCode)
+        {
+            try
+            {
+                Agent agent = await _sqlServerDataAccess.GetAgentByAgentCodeAsync(agentCode);
+                return await GetAgentCommissionByAgentId(agent.AgentId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Dictionary<string, object>> GetAgentTargetByAgentId(int agentId)
         {
             try
             {
@@ -189,6 +228,19 @@ namespace AgentReferralSystem.Api.Data.Services
                     result.Add("Message", "No Customer with AgentId: " + agentId);
                 }
                 return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Dictionary<string, object>> GetAgentTargetByAgentCode(string agentCode)
+        {
+            try
+            {
+                Agent agent = await _sqlServerDataAccess.GetAgentByAgentCodeAsync(agentCode);
+                return await GetAgentTargetByAgentId(agent.AgentId);
             }
             catch (Exception ex)
             {

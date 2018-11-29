@@ -22,12 +22,12 @@ namespace AgentReferralSystem.Api.Controllers
         }
 
         #region MobileUIAPI
-        [HttpPost("GetAgentProfile/{agentId}")]
-        public async Task<IActionResult> GetAgentProfile([FromHeader]string Token, int agentId)
+        [HttpPost("GetAgentProfileByAgentId/{agentId}")]
+        public async Task<IActionResult> GetAgentProfileByAgentId([FromHeader]string Token, int agentId)
         {
             try
             {
-                var result = await _agentService.GetAgentProfile(agentId);
+                var result = await _agentService.GetAgentProfileByAgentId(agentId);
 
                 if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
                 else return Ok(new { status = "Error", Message = "GetAgentProfile Error : Data is Null" });
@@ -38,12 +38,28 @@ namespace AgentReferralSystem.Api.Controllers
             }
         }
 
-        [HttpPost("GetAgentCustomer/{agentId}")]
-        public async Task<IActionResult> GetAgentCustomer([FromHeader]string Token,int agentId)
+        [HttpPost("GetAgentProfileByAgentCode/{agentCode}")]
+        public async Task<IActionResult> GetAgentProfileByAgentCode([FromHeader]string Token, string agentCode)
         {
             try
             {
-                var result = await _agentService.GetAgentCustomer(agentId);
+                var result = await _agentService.GetAgentProfileByAgentCode(agentCode);
+
+                if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
+                else return Ok(new { status = "Error", Message = "GetAgentProfile Error : Data is Null" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { status = "Error", Message = "Exception Thrown: " + ex.Message });
+            }
+        }
+
+        [HttpPost("GetAgentCustomerByAgentId/{agentId}")]
+        public async Task<IActionResult> GetAgentCustomerByAgentId([FromHeader]string Token,int agentId)
+        {
+            try
+            {
+                var result = await _agentService.GetAgentCustomerByAgentId(agentId);
 
                 if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
                 else return Ok(new { status = "Error", Message = "GetAgentCustomer Error : Data is Null" });
@@ -54,12 +70,12 @@ namespace AgentReferralSystem.Api.Controllers
             }
         }
 
-        [HttpPost("GetAgentCommission/{agentId}")]
-        public async Task<IActionResult> GetAgentCommission([FromHeader]string Token, int agentId)
+        [HttpPost("GetAgentCustomerByAgentCode/{agentCode}")]
+        public async Task<IActionResult> GetAgentCustomerByAgentCode([FromHeader]string Token, string agentCode)
         {
             try
             {
-                var result = await _agentService.GetAgentCommission(agentId);
+                var result = await _agentService.GetAgentCustomerByAgentCode(agentCode);
 
                 if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
                 else return Ok(new { status = "Error", Message = "GetAgentCustomer Error : Data is Null" });
@@ -70,12 +86,60 @@ namespace AgentReferralSystem.Api.Controllers
             }
         }
 
-        [HttpPost("GetAgentTarget/{agentId}")]
-        public async Task<IActionResult> GetAgentTarget([FromHeader]string Token, int agentId)
+        [HttpPost("GetAgentCommissionByAgentId/{agentId}")]
+        public async Task<IActionResult> GetAgentCommissionByAgentId([FromHeader]string Token, int agentId)
         {
             try
             {
-                var result = await _agentService.GetAgentTarget(agentId);
+                var result = await _agentService.GetAgentCommissionByAgentId(agentId);
+
+                if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
+                else return Ok(new { status = "Error", Message = "GetAgentCustomer Error : Data is Null" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { status = "Error", Message = "Exception Thrown: " + ex.Message });
+            }
+        }
+
+        [HttpPost("GetAgentCommissionByAgentCode/{agentCode}")]
+        public async Task<IActionResult> GetAgentCommissionByAgentCode([FromHeader]string Token, string agentCode)
+        {
+            try
+            {
+                var result = await _agentService.GetAgentCommissionByAgentCode(agentCode);
+
+                if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
+                else return Ok(new { status = "Error", Message = "GetAgentCustomer Error : Data is Null" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { status = "Error", Message = "Exception Thrown: " + ex.Message });
+            }
+        }
+
+        [HttpPost("GetAgentTargetByAgentId/{agentId}")]
+        public async Task<IActionResult> GetAgentTargetByAgentId([FromHeader]string Token, int agentId)
+        {
+            try
+            {
+                var result = await _agentService.GetAgentTargetByAgentId(agentId);
+
+                if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
+                else return Ok(new { status = "Error", Message = "GetAgentTarget Error : Data is Null" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { status = "Error", Message = "Exception Thrown: " + ex.Message });
+            }
+        }
+
+        [HttpPost("GetAgentTargetByAgentCode/{agentCode}")]
+        public async Task<IActionResult> GetAgentTargetByAgentCode([FromHeader]string Token, string agentCode)
+        {
+            try
+            {
+                var result = await _agentService.GetAgentTargetByAgentCode(agentCode);
 
                 if (result != null) return Ok(new { status = "OK", data = result["data"], Message = result["Message"] });
                 else return Ok(new { status = "Error", Message = "GetAgentTarget Error : Data is Null" });
@@ -152,7 +216,7 @@ namespace AgentReferralSystem.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetAgentByAgentCode/{agentId}")]
+        [HttpGet("GetAgentByAgentCode/{agentCode}")]
         public async Task<IActionResult> GetAgentByAgentCodeAsync(string agentCode)
         {
             try

@@ -65,7 +65,7 @@ namespace AgentReferralSystem.Api.Data.Query
         public static string GetARPatientsBillsByReferralTypeRowId()
         {
             return @"
-                SELECT DISTINCT 
+                    SELECT DISTINCT 
                     ARPBL_RowId,
                     ARPBL_PAADM_DR,
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR,
@@ -89,6 +89,7 @@ namespace AgentReferralSystem.Api.Data.Query
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR->PAPMI_OPNo,
                     ARPBL_PAADM_DR->PAADM_ADMNO EpisodeNo,
 	                ARPBL_AdmDate EpisodeDate,
+	                ARPBL_PAADM_DR-> PAADM_AdmTime EpisodeTime,
                     ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Code,
                     ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Desc,
 	                ARPBL_DischDate DischargeDate,
@@ -132,14 +133,14 @@ namespace AgentReferralSystem.Api.Data.Query
              	AND isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_LineTotal,0) > 0
              	and isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_ARCIM_DR->ARCIM_DerivedFeeItem, 'Y') <> 'Y'
              	and isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_ARCIM_DR->ARCIM_ItemCat_DR->ARCIC_Code,'') <> '1801WM'
-             	Order By EpisodeDate DESC
+             	Order By EpisodeDate DESC, EpisodeTime DESC
              	";
         }
 
         public static string GetARPatientsBillsByREFT_Code(string REFT_Code)
         {
             return $@"
-                SELECT DISTINCT 
+                    SELECT DISTINCT 
                     ARPBL_RowId,
                     ARPBL_PAADM_DR,
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR,
@@ -163,6 +164,7 @@ namespace AgentReferralSystem.Api.Data.Query
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR->PAPMI_OPNo,
                     ARPBL_PAADM_DR->PAADM_ADMNO EpisodeNo,
 	                ARPBL_AdmDate EpisodeDate,
+	                ARPBL_PAADM_DR-> PAADM_AdmTime EpisodeTime,
                     ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Code,
                     ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Desc,
 	                ARPBL_DischDate DischargeDate,
@@ -206,7 +208,7 @@ namespace AgentReferralSystem.Api.Data.Query
              	AND isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_LineTotal,0) > 0
              	and isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_ARCIM_DR->ARCIM_DerivedFeeItem, 'Y') <> 'Y'
              	and isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_ARCIM_DR->ARCIM_ItemCat_DR->ARCIC_Code,'') <> '1801WM'
-             	Order By EpisodeDate DESC
+             	Order By EpisodeDate DESC, EpisodeTime DESC
                 ";
         }
     
@@ -227,7 +229,7 @@ namespace AgentReferralSystem.Api.Data.Query
             }
 
             var query =  $@"
-SELECT DISTINCT 
+                    SELECT DISTINCT 
                     ARPBL_RowId,
                     ARPBL_PAADM_DR,
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR,
@@ -251,6 +253,7 @@ SELECT DISTINCT
                     ARPBL_PAADM_DR->PAADM_PAPMI_DR->PAPMI_OPNo,
                     ARPBL_PAADM_DR->PAADM_ADMNO EpisodeNo,
 	                ARPBL_AdmDate EpisodeDate,
+	                ARPBL_PAADM_DR-> PAADM_AdmTime EpisodeTime,
                     ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Code,
                     ARPBL_PAADM_DR->PAADM_AdmDocCodeDR->CTPCP_Desc,
 	                ARPBL_DischDate DischargeDate,
@@ -294,7 +297,7 @@ SELECT DISTINCT
              	AND isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_LineTotal,0) > 0
              	and isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_ARCIM_DR->ARCIM_DerivedFeeItem, 'Y') <> 'Y'
              	and isNull(AR_PatBillGroup->AR_PatBillGroupCharges->ITM_ARCIM_DR->ARCIM_ItemCat_DR->ARCIC_Code,'') <> '1801WM'
-             	Order By EpisodeDate DESC
+             	Order By EpisodeDate DESC, EpisodeTime DESC
             ";
             return query;
         }

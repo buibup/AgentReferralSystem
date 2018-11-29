@@ -11,10 +11,14 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
 {
     public interface IAgentService
     {
-        Task<Dictionary<string, object>> GetAgentProfile(int agentId);
-        Task<Dictionary<string, object>> GetAgentCustomer(int agentId);
-        Task<Dictionary<string, object>> GetAgentCommission(int agentId);
-        Task<Dictionary<string, object>> GetAgentTarget(int agentId);
+        Task<Dictionary<string, object>> GetAgentProfileByAgentId(int agentId);
+        Task<Dictionary<string, object>> GetAgentProfileByAgentCode(string agentCode);
+        Task<Dictionary<string, object>> GetAgentCustomerByAgentId(int agentId);
+        Task<Dictionary<string, object>> GetAgentCustomerByAgentCode(string agentCode);
+        Task<Dictionary<string, object>> GetAgentCommissionByAgentId(int agentId);
+        Task<Dictionary<string, object>> GetAgentCommissionByAgentCode(string agentCode);
+        Task<Dictionary<string, object>> GetAgentTargetByAgentId(int agentId);
+        Task<Dictionary<string, object>> GetAgentTargetByAgentCode(string agentCode);
         Task<IEnumerable<Agent>> GetAgentList();
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
         Task<List<AgentReportViewModel>> LoadAgentSummarizeByIdAsync(int agentId, int Year, int Month);

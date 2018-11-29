@@ -30,6 +30,7 @@ namespace AgentReferralSystem.Api.Data.Models.Cache
         public string PAPMI_OPNo { get; set; }
         public string EpisodeNo { get; set; }
         public DateTime EpisodeDate { get; set; }
+        public TimeSpan EpisodeTime { get; set; }
         public string CTPCP_Code { get; set; }
         public string CTPCP_Desc { get; set; }
         public DateTime? DischargeDate { get; set; } 

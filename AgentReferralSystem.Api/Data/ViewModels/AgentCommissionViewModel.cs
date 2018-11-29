@@ -13,14 +13,16 @@ namespace AgentReferralSystem.Api.Data.ViewModels
     public class AgentCommissionViewModel
     {
         public DateTime CommissionDate { get; set; }
+        public string CommissionTime { get; set; }
         public decimal currentCommission { get; set; }
         public decimal TotalSale { get; set; }
         public string CustomerName { get; set; }
         public decimal CustomerSpend { get; set; }
 
-        public AgentCommissionViewModel(DateTime CommissionDate, decimal currentCommission, decimal TotalSale, string CustomerName, decimal CustomerSpend)
+        public AgentCommissionViewModel(DateTime CommissionDate, string CommissionTime, decimal currentCommission, decimal TotalSale, string CustomerName, decimal CustomerSpend)
         {
             this.CommissionDate = CommissionDate;
+            this.CommissionTime = CommissionTime;
             this.CustomerName = CustomerName;
             this.CustomerSpend = CustomerSpend;
             this.currentCommission = currentCommission;
@@ -33,7 +35,8 @@ namespace AgentReferralSystem.Api.Data.ViewModels
             await Task.Run(() =>
             {
                 decimal TotalSale = 0;
-                var dateList = itemsList.Select(x => x.Episode_Date).Distinct().ToList();
+                var dateList = itemsList.OrderByDescending(x => x.Episode_Date).OrderByDescending(x => x.Episode_Time)
+                .Select(x => x.Episode_Date).Distinct().ToList();
                 foreach (DateTime date in dateList)
                 {
                     List<AgentCommissionViewModel> detailList = new List<AgentCommissionViewModel>();
@@ -51,7 +54,18 @@ namespace AgentReferralSystem.Api.Data.ViewModels
                         var customerTotal = customerfilterList.Sum(x => x.Item_Total);
                         TotalSale = decimal.Add(customerTotal, TotalSale);
                         var commission = decimal.Divide(decimal.Multiply(TotalSale, CurrentPercent), 100);
-                        AgentCommissionViewModel item = new AgentCommissionViewModel(date,commission,TotalSale, customer, customerTotal);
+                        var TimeList = customerfilterList
+                          .Select(i =>
+                          {
+                              TimeSpan time;
+                              if (TimeSpan.TryParse(i.Episode_Time, out time))
+                                  return new Nullable<TimeSpan>(time);
+                              return null;
+                          })
+                          .Where(x => x.HasValue)
+                          .ToList();
+                        var fastestTime = TimeList.Min().ToString() == "" ? "00:00" : TimeList.Min().ToString();
+                        AgentCommissionViewModel item = new AgentCommissionViewModel(date, fastestTime, commission,TotalSale, customer, customerTotal);
                         detailList.Add(item);
                     }
                     AgentDateCommissionViewModel itm = new AgentDateCommissionViewModel(date, detailList);

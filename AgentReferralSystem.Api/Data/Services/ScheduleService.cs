@@ -232,6 +232,7 @@ namespace AgentReferralSystem.Api.Data.Services
                     item.Patient_Name = bill.PAPMI_Name + " " + bill.PAPMI_Name2;
                     item.Episode_Number = bill.EpisodeNo;
                     item.Episode_Date = bill.EpisodeDate;
+                    item.Episode_Time = bill.EpisodeTime.ToString();
                     item.Doctor_Code = bill.CTPCP_Code;
                     item.Doctor_Name = bill.CTPCP_Desc;
                     item.Discharge_Date = bill.DischargeDate;

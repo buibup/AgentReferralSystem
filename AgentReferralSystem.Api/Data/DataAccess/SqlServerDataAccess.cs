@@ -284,6 +284,7 @@ namespace AgentReferralSystem.Api.Data.DataAccess
                     p.Add("@Patient_Desc", item.Patient_Desc);
                     p.Add("@Episode_Number", item.Episode_Number);
                     p.Add("@Episode_Date", item.Episode_Date);
+                    p.Add("@Episode_Time", item.Episode_Time);
                     p.Add("@Doctor_Code", item.Doctor_Code);
                     p.Add("@Doctor_Name", item.Doctor_Name);
                     p.Add("@Discharge_Date", item.Discharge_Date);
