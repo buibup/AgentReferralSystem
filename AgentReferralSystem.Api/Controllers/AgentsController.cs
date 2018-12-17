@@ -152,9 +152,10 @@ namespace AgentReferralSystem.Api.Controllers
         #endregion
 
         [HttpGet("GetAgentList")]
-        public async Task<IActionResult> GetAgentList()
+        [HttpGet("GetAgentList/{search}")]
+        public async Task<IActionResult> GetAgentList(string search = "")
         {
-            var result = await _agentService.GetAgentList();
+            var result = await _agentService.GetAgentList(search);
 
             if (result == null) return NotFound();
 

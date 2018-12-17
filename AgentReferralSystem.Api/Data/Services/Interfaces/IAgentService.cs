@@ -19,7 +19,7 @@ namespace AgentReferralSystem.Api.Data.Services.Interfaces
         Task<Dictionary<string, object>> GetAgentCommissionByAgentCode(string agentCode);
         Task<Dictionary<string, object>> GetAgentTargetByAgentId(int agentId);
         Task<Dictionary<string, object>> GetAgentTargetByAgentCode(string agentCode);
-        Task<IEnumerable<Agent>> GetAgentList();
+        Task<IEnumerable<Agent>> GetAgentList(string search);
         Task<AgentViewModel> GetAgentViewModelByAgentIdAsync(int agentId);
         Task<List<AgentReportViewModel>> LoadAgentSummarizeByIdAsync(int agentId, int Year, int Month);
         Task<PACReferralType> GetPACReferralTypesByIdAsync(int agentId);

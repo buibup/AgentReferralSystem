@@ -96,14 +96,16 @@ namespace AgentReferralSystem.Api.Data.DataAccess
             }
         }
 
-        public async Task<IEnumerable<Agent>> GetAgentList()
+        public async Task<IEnumerable<Agent>> GetAgentList(string search = "")
         {
             using (var conn = new SqlConnection(_connectionStrings.SqlServer))
             {
                 conn.Open();
+
                 try
                 {
                     var query = "select * from dbo.Agent where isNull(isDelete,0) = 0";
+                    if (!string.IsNullOrWhiteSpace(search)) query += " and AgentDesc like '% " + search + "%'";
                     var data = (await conn.QueryAsync<Agent>(query));
                     return data;
                 }
